@@ -2,6 +2,12 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var model: JiraBarModel
+    @State private var draftPreferredSite: String
+
+    init(model: JiraBarModel) {
+        self.model = model
+        self._draftPreferredSite = State(initialValue: model.preferredSite)
+    }
 
     var body: some View {
         Form {
@@ -11,8 +17,21 @@ struct SettingsView: View {
                 LabeledContent("Connected Site", value: self.model.snapshot.site.isEmpty ? "Not loaded yet" : self.model.snapshot.site)
                 LabeledContent("Auth", value: self.model.snapshot.auth.authorized ? "Authorized" : "Logged out")
                 LabeledContent("Preferred Site", value: self.model.preferredSite.isEmpty ? "Not set" : self.model.preferredSite)
-                TextField("Preferred Site", text: self.$model.preferredSite, prompt: Text("your-team.atlassian.net"))
+                TextField("Preferred Site", text: self.$draftPreferredSite, prompt: Text("your-team.atlassian.net"))
                     .textFieldStyle(.roundedBorder)
+
+                HStack {
+                    Button("Save Site") {
+                        self.savePreferredSite()
+                    }
+                    .disabled(!self.hasPendingPreferredSiteChanges)
+
+                    if self.hasPendingPreferredSiteChanges {
+                        Button("Reset") {
+                            self.draftPreferredSite = self.model.preferredSite
+                        }
+                    }
+                }
 
                 if self.model.preferredSite.isEmpty {
                     Text("Set your Jira domain here before logging in.")
@@ -24,7 +43,7 @@ struct SettingsView: View {
 
                 if !self.model.snapshot.site.isEmpty && self.model.snapshot.site != self.model.preferredSite {
                     Button("Use Connected Site") {
-                        self.model.preferredSite = self.model.snapshot.site
+                        self.draftPreferredSite = self.model.snapshot.site
                     }
                 }
             }
@@ -73,5 +92,23 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .padding(20)
         .frame(width: 420)
+        .onChange(of: self.model.preferredSite) { _, newValue in
+            if !self.hasPendingPreferredSiteChanges {
+                self.draftPreferredSite = newValue
+            }
+        }
+    }
+
+    private var normalizedDraftPreferredSite: String {
+        self.draftPreferredSite.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var hasPendingPreferredSiteChanges: Bool {
+        self.normalizedDraftPreferredSite != self.model.preferredSite
+    }
+
+    private func savePreferredSite() {
+        self.model.preferredSite = self.normalizedDraftPreferredSite
+        self.draftPreferredSite = self.model.preferredSite
     }
 }

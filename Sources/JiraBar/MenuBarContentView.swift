@@ -88,8 +88,8 @@ struct MenuBarContentView: View {
             }
 
             Section {
-                SettingsLink {
-                    Text("Settings…")
+                Button("Settings…") {
+                    Self.openSettingsWindow()
                 }
 
                 Button("Quit JiraBar") {
@@ -99,6 +99,20 @@ struct MenuBarContentView: View {
         }
         .task {
             await self.model.refreshIfNeededForMenuOpen()
+        }
+    }
+
+    private static func openSettingsWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            for window in NSApp.windows {
+                guard window.title.contains("Settings") else { continue }
+                window.collectionBehavior.insert(.moveToActiveSpace)
+                window.orderFrontRegardless()
+                window.makeKeyAndOrderFront(nil)
+            }
         }
     }
 }
