@@ -112,9 +112,10 @@ struct MenuBarContentView: View {
         }
 
         let hosting = NSHostingController(rootView: SettingsView(model: model))
+        hosting.sizingOptions = .preferredContentSize
         let window = NSWindow(contentViewController: hosting)
         window.title = "JiraBar Settings"
-        window.styleMask = [.titled, .closable, .fullSizeContentView]
+        window.styleMask = [.titled, .closable]
         window.collectionBehavior = [.moveToActiveSpace]
         window.center()
         settingsWindow = window

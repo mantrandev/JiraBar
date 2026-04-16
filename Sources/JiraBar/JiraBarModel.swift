@@ -219,8 +219,6 @@ final class JiraBarModel: ObservableObject {
     }
 
     private func startAuthPolling(successMessage: String, preferredSite: String) {
-        guard self.lastErrorMessage == nil else { return }
-
         Task { [weak self] in
             guard let self else { return }
 
