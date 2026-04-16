@@ -94,6 +94,21 @@ enum ShellCommandRunner {
         }
     }
 
+    static func launch(
+        executableURL: URL,
+        arguments: [String],
+        environment: [String: String]? = nil) throws
+    {
+        let process = Process()
+        process.executableURL = executableURL
+        process.arguments = arguments
+        process.environment = Self.makeEnvironment(overrides: environment)
+        process.standardInput = FileHandle(forReadingAtPath: "/dev/null")
+        process.standardOutput = FileHandle(forWritingAtPath: "/dev/null")
+        process.standardError = FileHandle(forWritingAtPath: "/dev/null")
+        try process.run()
+    }
+
     private static func makeEnvironment(overrides: [String: String]?) -> [String: String] {
         var merged = ProcessInfo.processInfo.environment
         let existingPath = merged["PATH"] ?? ""

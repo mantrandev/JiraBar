@@ -22,16 +22,22 @@ struct JiraCLI {
         return try decoder.decode(JiraSnapshot.self, from: data)
     }
 
-    func login() async throws {
-        try await self.runShell("source ~/.zshrc 2>/dev/null; acli jira auth login --web")
+    func login(site: String) async throws {
+        let trimmedSite = site.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSite.isEmpty else {
+            throw ShellCommandError.failedCommand("Set your Jira site in Settings before logging in.")
+        }
+
+        try self.launchShell(
+            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web --site \(Self.escape(trimmedSite))")
     }
 
     func logout() async throws {
         try await self.runShell("source ~/.zshrc 2>/dev/null; acli jira auth logout")
     }
 
-    func switchAccount() async throws {
-        try await self.runShell("source ~/.zshrc 2>/dev/null; acli jira auth switch")
+    func switchAccount(site: String) async throws {
+        try await self.login(site: site)
     }
 
     func openInBrowser(ticketKey: String) async throws {
@@ -71,6 +77,12 @@ struct JiraCLI {
         guard output.exitCode == 0 else {
             throw ShellCommandError.failedCommand(output.combinedOutput)
         }
+    }
+
+    private func launchShell(_ script: String) throws {
+        try ShellCommandRunner.launch(
+            executableURL: self.zshURL,
+            arguments: ["-lc", script])
     }
 
     static func escape(_ value: String) -> String {

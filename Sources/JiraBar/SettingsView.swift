@@ -10,6 +10,7 @@ struct SettingsView: View {
                 LabeledContent("Account", value: self.model.snapshot.accountEmail ?? "Not detected yet")
                 LabeledContent("Site", value: self.model.snapshot.site.isEmpty ? "Not loaded yet" : self.model.snapshot.site)
                 LabeledContent("Auth", value: self.model.snapshot.auth.authorized ? "Authorized" : "Logged out")
+                TextField("Preferred Site", text: self.$model.preferredSite, prompt: Text("your-team.atlassian.net"))
             }
 
             Section("Refresh") {
