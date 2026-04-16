@@ -31,6 +31,7 @@ final class JiraBarModel: ObservableObject {
     }
     @Published var isRefreshing = false
     @Published var isPerformingAction = false
+    @Published var isLoadingInitialSnapshot = true
     @Published var lastActionMessage: String?
     @Published var lastErrorMessage: String?
 
@@ -56,6 +57,9 @@ final class JiraBarModel: ObservableObject {
     }
 
     var menuBarTitle: String {
+        if self.isLoadingInitialSnapshot {
+            return "Jira …"
+        }
         if !self.snapshot.auth.authorized {
             return "Jira Login"
         }
@@ -114,7 +118,10 @@ final class JiraBarModel: ObservableObject {
         }
 
         self.isRefreshing = true
-        defer { self.isRefreshing = false }
+        defer {
+            self.isRefreshing = false
+            self.isLoadingInitialSnapshot = false
+        }
 
         do {
             let snapshot = try await self.cli.fetchSnapshot()
