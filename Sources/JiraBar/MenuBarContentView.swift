@@ -119,7 +119,9 @@ struct MenuBarContentView: View {
                     object: window,
                     queue: .main
                 ) { _ in
-                    NSApp.setActivationPolicy(.accessory)
+                    DispatchQueue.main.async {
+                        NSApp.setActivationPolicy(.accessory)
+                    }
                 }
             }
         }
