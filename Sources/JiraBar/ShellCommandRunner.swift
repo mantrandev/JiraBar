@@ -94,6 +94,82 @@ enum ShellCommandRunner {
         }
     }
 
+    /// Runs a process with a live stdin pipe. `autoRespond` is called each time new output arrives;
+    /// return a non-nil string to write it to stdin (called at most once).
+    static func runInteractive(
+        executableURL: URL,
+        arguments: [String],
+        environment: [String: String]? = nil,
+        autoRespond: @escaping @Sendable (String) -> String?) async throws -> ShellOutput
+    {
+        final class State: @unchecked Sendable {
+            let lock = NSLock()
+            var stdoutData = Data()
+            var stderrData = Data()
+            var responded = false
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let stdoutPipe = Pipe()
+            let stderrPipe = Pipe()
+            let stdinPipe = Pipe()
+            let process = Process()
+            process.executableURL = executableURL
+            process.arguments = arguments
+            process.standardOutput = stdoutPipe
+            process.standardError = stderrPipe
+            process.standardInput = stdinPipe
+            process.environment = Self.makeEnvironment(overrides: environment)
+
+            let state = State()
+
+            let considerResponse: @Sendable () -> Void = {
+                state.lock.lock()
+                defer { state.lock.unlock() }
+                guard !state.responded else { return }
+                let combined = String(decoding: state.stdoutData + state.stderrData, as: UTF8.self)
+                if let reply = autoRespond(combined) {
+                    state.responded = true
+                    stdinPipe.fileHandleForWriting.write(Data(reply.utf8))
+                    stdinPipe.fileHandleForWriting.closeFile()
+                }
+            }
+
+            stdoutPipe.fileHandleForReading.readabilityHandler = { fh in
+                let chunk = fh.availableData
+                guard !chunk.isEmpty else { return }
+                state.lock.lock(); state.stdoutData.append(chunk); state.lock.unlock()
+                considerResponse()
+            }
+
+            stderrPipe.fileHandleForReading.readabilityHandler = { fh in
+                let chunk = fh.availableData
+                guard !chunk.isEmpty else { return }
+                state.lock.lock(); state.stderrData.append(chunk); state.lock.unlock()
+                considerResponse()
+            }
+
+            process.terminationHandler = { p in
+                stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                stderrPipe.fileHandleForReading.readabilityHandler = nil
+                state.lock.lock()
+                let stdout = String(decoding: state.stdoutData, as: UTF8.self)
+                let stderr = String(decoding: state.stderrData, as: UTF8.self)
+                state.lock.unlock()
+                continuation.resume(returning: ShellOutput(
+                    exitCode: p.terminationStatus,
+                    standardOutput: stdout,
+                    standardError: stderr))
+            }
+
+            do {
+                try process.run()
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
     static func launch(
         executableURL: URL,
         arguments: [String],

@@ -28,11 +28,30 @@ struct JiraCLI {
             throw ShellCommandError.failedCommand("Set your Jira site in Settings before logging in.")
         }
 
-        // Open in Terminal so acli gets a real TTY for the post-browser site selection prompt.
-        let cmd = "source ~/.zshrc 2>/dev/null; acli jira auth login --web; exit"
-        try self.launchShell(
-            "osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script \"\(cmd)\"' -e 'end tell'"
-        )
+        // Run interactively so we can auto-respond to acli's post-browser site selection prompt.
+        let output = try await ShellCommandRunner.runInteractive(
+            executableURL: self.zshURL,
+            arguments: ["-lc", "source ~/.zshrc 2>/dev/null; acli jira auth login --web"]
+        ) { accumulated in
+            // acli prints a numbered list after browser auth, e.g. "1. your-site.atlassian.net"
+            // Match against the preferred site and reply with its number; fall back to "1".
+            let lines = accumulated.components(separatedBy: .newlines)
+            guard lines.contains(where: { $0.contains(".atlassian.net") || $0.contains("Select") }) else {
+                return nil
+            }
+            for line in lines {
+                guard line.contains(trimmedSite) else { continue }
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                if let digit = trimmed.first, digit.isNumber {
+                    return "\(digit)\n"
+                }
+            }
+            return "1\n"
+        }
+
+        guard output.exitCode == 0 else {
+            throw ShellCommandError.failedCommand(output.combinedOutput)
+        }
     }
 
     func logout() async throws {
