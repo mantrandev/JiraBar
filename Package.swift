@@ -13,6 +13,7 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "JiraBar",
+            path: "Sources",
             resources: [
                 .process("Resources"),
             ]
