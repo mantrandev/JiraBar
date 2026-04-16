@@ -1,34 +1,67 @@
-# JiraBar
+# JiraBar 🎟️ — May your sprint never go untracked.
 
-Minimal macOS menu bar app for Jira current-sprint work.
-
-Shows parent stories and your not-done sprint tickets. Per-ticket hover menus for assign / next / previous / explicit workflow status changes. Login / logout / switch account from the menu or Settings window.
+Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows parent stories and your not-done tickets, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
 ## Requirements
 
-- macOS 14+
+- macOS 14+ (Sonoma)
 - [`acli`](https://acli.atlassian.com) installed (`brew install atlassian/tap/acli`)
 - `jq` installed (`brew install jq`)
 
-## Install the app
+## Install
+
+**Download DMG (recommended):**
+
+Build and export via:
+```bash
+./Scripts/package_app.sh
+```
+Then open `JiraBar.dmg`, drag `JiraBar.app` to `/Applications`, and launch.
 
 **Build from source (Xcode):**
-
 ```bash
-open JiraBar.xcodeproj
-# Run the JiraBar scheme
+open JiraBar.xcodeproj   # run the JiraBar scheme
 ```
 
 **Build from source (CLI):**
-
 ```bash
 ./Scripts/package_app.sh
-# Output: .build/xcode/Build/Products/Release/JiraBar.app
+# Output: JiraBar.dmg (drag app → /Applications)
 ```
 
-Copy `JiraBar.app` to `/Applications`, then launch it.
+### First run
+1. Launch `JiraBar.app` — the menu bar icon appears immediately.
+2. Open **Settings** (menu bar → Settings…).
+3. Set your Jira site (`your-team.atlassian.net`) under **Workspace → Preferred Site**.
+4. Click **Save Site**, then click **Login**.
+5. Complete authentication in your browser; JiraBar polls until it detects success.
 
-On first launch, open Settings (menu bar → Settings…), set your Jira site (`your-team.atlassian.net`), then click Login.
+> **Gatekeeper note:** App is not code-signed. First launch: right-click → Open → Open.
+
+---
+
+## Features
+
+- **Stories** section — parent stories for your active sprint.
+- **My Not Done** section — all sprint tickets assigned to you that are not Done.
+- Per-ticket submenu:
+  - Open in Jira (browser)
+  - Assign to Me
+  - Next Status / Previous Status (workflow order)
+  - Move to → explicit status picker
+- Settings window: preferred site, refresh interval (Manual / 30s / 1m / 2m / 5m), max items per section (3–20).
+- Switch Account and Logout from the menu or Settings.
+- Menu bar title shows live ticket count (`Jira 5`) or `Jira …` while loading.
+
+---
+
+## Workflow statuses
+
+JiraBar steps through statuses in this order:
+
+`TO DO` → `In Progress` → `Testing` → `Block` → `Review` → `Wait to build PROD` → `DONE`
+
+Next Status / Previous Status move one step along that chain. Move to lets you jump anywhere.
 
 ---
 
@@ -91,9 +124,9 @@ TICKET accepts: bare number (`3642`), project key (`PROJECT-3642`), or full Jira
 
 ---
 
-## Claude Code skill (optional)
+## Claude Code / Pi skill (optional)
 
-If you use [Claude Code](https://claude.ai/code), the skill at `.claude/skills/jira-acli.md` teaches Claude to use the `jhelp` functions above.
+If you use [Claude Code](https://claude.ai/code) or [Pi](https://github.com/mariozechner/pi), the skill at `.claude/skills/jira-acli.md` teaches the agent to use the `jhelp` functions above.
 
 **Install globally** (available in all projects):
 
@@ -108,9 +141,25 @@ The file is already at `.claude/skills/jira-acli.md` and will be picked up autom
 
 ---
 
-## Swift Package fallback
+## Architecture
 
-```bash
-swift build
-swift test
-```
+| File | Role |
+|---|---|
+| `JiraBarApp.swift` | `@main` entry, wires `JiraBarModel` into `MenuBarExtra` |
+| `AppDelegate.swift` | Forces accessory mode (no Dock icon) on launch |
+| `JiraBarModel.swift` | `@MainActor ObservableObject` — all state, refresh loop, UserDefaults |
+| `JiraCLI.swift` | Wraps `acli jira …` commands; all shell strings prefixed with `shellPreamble` |
+| `ShellCommandRunner.swift` | async/await `Process` wrappers: `run`, `runInteractive`, `launch` |
+| `JiraModels.swift` | Codable structs: `JiraSnapshot`, `JiraTicket`, `JiraAuthState` |
+| `Resources/jira_snapshot.zsh` | Bundled script; sources `~/.zshrc`, calls `acli`, emits JSON |
+| `AppResources.swift` | Bundle resource loader with Xcode/SPM fallback paths |
+
+## Runtime requirements
+
+`acli` and `jq` must be reachable via the user's `~/.zshrc` PATH — the snapshot script sources it on every refresh.
+
+---
+
+## License
+
+MIT
