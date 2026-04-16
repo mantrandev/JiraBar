@@ -175,18 +175,22 @@ board_context="$(printf '%s' "$board_raw" | "$jq_bin" -c '
     end;
 
   items
-  | map({
-      id: (.id // .boardId // .board.id // ""),
-      name: (.name // .board.name // ""),
-      projectKey: (
-        .location.projectKey
-        // .location.project.key
-        // .location.projectKeyOrId
-        // .projectKey
-        // .project.key
-        // ""
-      )
-    })
+  | map(
+      if type == "string" then
+        { name: . }
+      elif type == "object" then
+        {
+          name: (
+            .name
+            // .board.name
+            // .location.name
+            // ""
+          )
+        }
+      else
+        {}
+      end
+    )
   | map(select(.name | type == "string" and length > 0))
   | .[0] // {}
 ')"
