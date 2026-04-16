@@ -24,11 +24,9 @@ Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible wit
 
 **Download DMG (recommended):**
 
-Build and export via:
-```bash
-./Scripts/package_app.sh
-```
-Then open `JiraBar.dmg`, drag `JiraBar.app` to `/Applications`, and launch.
+[⬇️ Download JiraBar.dmg](https://github.com/mantrandev/JiraBar/releases/latest/download/JiraBar.dmg)
+
+Open `JiraBar.dmg`, drag `JiraBar.app` to `/Applications`, and launch.
 
 **Build from source (Xcode):**
 ```bash
