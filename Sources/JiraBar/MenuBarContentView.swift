@@ -107,7 +107,8 @@ struct MenuBarContentView: View {
         NSApp.activate(ignoringOtherApps: true)
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(100))
             for window in NSApp.windows {
                 guard window.title.contains("Settings") else { continue }
                 window.collectionBehavior.insert(.moveToActiveSpace)
