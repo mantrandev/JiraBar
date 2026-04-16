@@ -15,7 +15,6 @@ struct MenuBarContentView: View {
                 } else if !self.model.preferredSite.isEmpty {
                     Text("Configured: \(self.model.preferredSite)")
                 }
-                Text(self.model.snapshot.auth.description)
             }
 
             Section("Status") {
