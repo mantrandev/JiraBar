@@ -1,0 +1,285 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA0000000000000000000101 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000201 /* AppDelegate.swift */; };
+		AA0000000000000000000102 /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000202 /* AppResources.swift */; };
+		AA0000000000000000000103 /* JiraBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000203 /* JiraBarApp.swift */; };
+		AA0000000000000000000104 /* JiraBarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000204 /* JiraBarModel.swift */; };
+		AA0000000000000000000105 /* JiraCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000205 /* JiraCLI.swift */; };
+		AA0000000000000000000106 /* JiraModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000206 /* JiraModels.swift */; };
+		AA0000000000000000000107 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000207 /* MenuBarContentView.swift */; };
+		AA0000000000000000000108 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000208 /* SettingsView.swift */; };
+		AA0000000000000000000109 /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000209 /* ShellCommandRunner.swift */; };
+		AA0000000000000000000110 /* jira_snapshot.zsh in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000210 /* jira_snapshot.zsh */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA0000000000000000000201 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000202 /* AppResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/AppResources.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000203 /* JiraBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraBarApp.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000204 /* JiraBarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraBarModel.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000205 /* JiraCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraCLI.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000206 /* JiraModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraModels.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000207 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/MenuBarContentView.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000208 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000209 /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/ShellCommandRunner.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000210 /* jira_snapshot.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.zsh; path = Sources/JiraBar/Resources/jira_snapshot.zsh; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000211 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000212 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000213 /* package_app.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Scripts/package_app.sh; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000214 /* JiraBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JiraBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA0000000000000000000301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA0000000000000000000401 = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000402 /* JiraBar */,
+				AA0000000000000000000404 /* Scripts */,
+				AA0000000000000000000212 /* Package.swift */,
+				AA0000000000000000000211 /* README.md */,
+				AA0000000000000000000403 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000402 /* JiraBar */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000201 /* AppDelegate.swift */,
+				AA0000000000000000000202 /* AppResources.swift */,
+				AA0000000000000000000203 /* JiraBarApp.swift */,
+				AA0000000000000000000204 /* JiraBarModel.swift */,
+				AA0000000000000000000205 /* JiraCLI.swift */,
+				AA0000000000000000000206 /* JiraModels.swift */,
+				AA0000000000000000000207 /* MenuBarContentView.swift */,
+				AA0000000000000000000208 /* SettingsView.swift */,
+				AA0000000000000000000209 /* ShellCommandRunner.swift */,
+				AA0000000000000000000405 /* Resources */,
+			);
+			path = Sources/JiraBar;
+			sourceTree = SOURCE_ROOT;
+		};
+		AA0000000000000000000403 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000214 /* JiraBar.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000404 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000213 /* package_app.sh */,
+			);
+			path = Scripts;
+			sourceTree = SOURCE_ROOT;
+		};
+		AA0000000000000000000405 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000210 /* jira_snapshot.zsh */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA0000000000000000000501 /* JiraBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0000000000000000000602 /* Build configuration list for PBXNativeTarget "JiraBar" */;
+			buildPhases = (
+				AA0000000000000000000301 /* Frameworks */,
+				AA0000000000000000000701 /* Sources */,
+				AA0000000000000000000702 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JiraBar;
+			productName = JiraBar;
+			productReference = AA0000000000000000000214 /* JiraBar.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0000000000000000000601 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					AA0000000000000000000501 = {
+						CreatedOnToolsVersion = 26.4;
+					};
+				};
+			};
+			buildConfigurationList = AA0000000000000000000603 /* Build configuration list for PBXProject "JiraBar" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0000000000000000000401;
+			productRefGroup = AA0000000000000000000403 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0000000000000000000501 /* JiraBar */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000702 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000110 /* jira_snapshot.zsh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000701 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000101 /* AppDelegate.swift in Sources */,
+				AA0000000000000000000102 /* AppResources.swift in Sources */,
+				AA0000000000000000000103 /* JiraBarApp.swift in Sources */,
+				AA0000000000000000000104 /* JiraBarModel.swift in Sources */,
+				AA0000000000000000000105 /* JiraCLI.swift in Sources */,
+				AA0000000000000000000106 /* JiraModels.swift in Sources */,
+				AA0000000000000000000107 /* MenuBarContentView.swift in Sources */,
+				AA0000000000000000000108 /* SettingsView.swift in Sources */,
+				AA0000000000000000000109 /* ShellCommandRunner.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA0000000000000000000801 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000802 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		AA0000000000000000000803 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = JiraBar;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maybe.jirabar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000804 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = JiraBar;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maybe.jirabar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA0000000000000000000602 /* Build configuration list for PBXNativeTarget "JiraBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000803 /* Debug */,
+				AA0000000000000000000804 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0000000000000000000603 /* Build configuration list for PBXProject "JiraBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000801 /* Debug */,
+				AA0000000000000000000802 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA0000000000000000000601 /* Project object */;
+}
