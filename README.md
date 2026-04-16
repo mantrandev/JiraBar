@@ -8,13 +8,13 @@
   <circle cx="10" cy="95" r="2.5" fill="black"/>
   <circle cx="42" cy="95" r="4.5" fill="black"/>
 </svg>
-<img width="749" height="562" alt="demo" src="https://github.com/user-attachments/assets/312770c9-b110-467a-9d5a-cba86ee0ba2e" />
-
-
 
 # JiraBar 🎟️ — May your sprint never go untracked.
 
 Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows parent stories and your not-done tickets, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
+
+<img width="749" height="562" alt="demo" src="https://github.com/user-attachments/assets/312770c9-b110-467a-9d5a-cba86ee0ba2e" />
+<img width="664" height="679" alt="Screenshot 2026-04-17 at 12 11 07 AM" src="https://github.com/user-attachments/assets/b9522d06-d7a6-4db4-a4d8-c8e0d653f592" />
 
 ## Requirements
 
