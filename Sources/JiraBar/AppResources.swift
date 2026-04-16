@@ -9,4 +9,12 @@ enum AppResources {
             ?? Bundle.main.resourceURL?.appending(path: "jira_snapshot.zsh")
         #endif
     }
+
+    static func menuBarIconURL() -> URL? {
+        #if SWIFT_PACKAGE
+        return Bundle.module.url(forResource: "menubar_icon", withExtension: "svg")
+        #else
+        return Bundle.main.url(forResource: "menubar_icon", withExtension: "svg")
+        #endif
+    }
 }

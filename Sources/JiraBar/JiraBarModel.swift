@@ -82,7 +82,8 @@ final class JiraBarModel: ObservableObject {
         guard self.snapshot.auth.authorized, !self.isPerformingAction else {
             return nil
         }
-        guard let image = NSImage(named: "MenuBarIcon") else {
+        guard let url = AppResources.menuBarIconURL(),
+              let image = NSImage(contentsOf: url) else {
             return nil
         }
         image.isTemplate = true
