@@ -29,7 +29,7 @@ struct JiraCLI {
         }
 
         try self.launchShell(
-            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web --site \(Self.escape(trimmedSite))")
+            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web")
     }
 
     func logout() async throws {
@@ -37,7 +37,13 @@ struct JiraCLI {
     }
 
     func switchAccount(site: String) async throws {
-        try await self.login(site: site)
+        let trimmedSite = site.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedSite.isEmpty else {
+            throw ShellCommandError.failedCommand("Set your Jira site in Settings before switching accounts.")
+        }
+
+        try await self.runShell(
+            "source ~/.zshrc 2>/dev/null; acli jira auth switch --site \(Self.escape(trimmedSite))")
     }
 
     func openInBrowser(ticketKey: String) async throws {

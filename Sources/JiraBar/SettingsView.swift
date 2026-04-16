@@ -81,6 +81,13 @@ struct SettingsView: View {
                 .disabled(!self.model.snapshot.auth.authorized)
             }
 
+            if let message = self.model.lastActionMessage, !message.isEmpty {
+                Section("Status") {
+                    Text(message)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             if let error = self.model.lastErrorMessage, !error.isEmpty {
                 Section("Last Error") {
                     Text(error)
