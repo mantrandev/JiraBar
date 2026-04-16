@@ -90,10 +90,6 @@ final class JiraBarModel: ObservableObject {
         return Self.relativeFormatter.localizedString(for: self.snapshot.fetchedAt, relativeTo: .now)
     }
 
-    func refreshIfNeededForMenuOpen() async {
-        await self.refresh(force: false)
-    }
-
     func refresh(force: Bool) async {
         if self.isRefreshing { return }
         if !force,
@@ -122,11 +118,10 @@ final class JiraBarModel: ObservableObject {
     }
 
     func login() async {
-        await self.runAction(progress: "Opening Jira login…", refreshAfter: false) {
-            try await self.cli.login(site: self.preferredSite)
-            return "Complete Jira login in your browser."
-        }
-        self.startAuthPolling(successMessage: "Jira login successful.", preferredSite: self.preferredSite)
+        await self.performWebAuth(
+            progress: "Opening Jira login…",
+            pending: "Complete Jira login in your browser.",
+            success: "Jira login successful.")
     }
 
     func logout() async {
@@ -137,11 +132,18 @@ final class JiraBarModel: ObservableObject {
     }
 
     func switchAccount() async {
-        await self.runAction(progress: "Switching Jira account…", refreshAfter: false) {
+        await self.performWebAuth(
+            progress: "Switching Jira account…",
+            pending: "Complete account switching in your browser.",
+            success: "Jira account updated.")
+    }
+
+    private func performWebAuth(progress: String, pending: String, success: String) async {
+        await self.runAction(progress: progress, refreshAfter: false) {
             try await self.cli.login(site: self.preferredSite)
-            return "Complete account switching in your browser."
+            return pending
         }
-        self.startAuthPolling(successMessage: "Jira account updated.", preferredSite: self.preferredSite)
+        self.startAuthPolling(successMessage: success, preferredSite: self.preferredSite)
     }
 
     func openInBrowser(_ ticket: JiraTicket) async {
@@ -224,10 +226,6 @@ final class JiraBarModel: ObservableObject {
 
             for _ in 0..<45 {
                 try? await Task.sleep(for: .seconds(2))
-                if !preferredSite.isEmpty {
-                    try? await self.cli.switchAccount(site: preferredSite)
-                }
-
                 await self.refresh(force: true)
 
                 if self.snapshot.auth.authorized {

@@ -98,7 +98,7 @@ struct MenuBarContentView: View {
             }
         }
         .task {
-            await self.model.refreshIfNeededForMenuOpen()
+            await self.model.refresh(force: false)
         }
     }
 

@@ -14,8 +14,5 @@ struct JiraBarApp: App {
         }
         .menuBarExtraStyle(.menu)
 
-        Settings {
-            SettingsView(model: self.model)
-        }
     }
 }
