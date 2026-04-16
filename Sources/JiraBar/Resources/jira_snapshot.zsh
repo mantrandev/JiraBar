@@ -35,8 +35,8 @@ if [[ -z "$acli_bin" ]]; then
       --arg site "$site" \
       --arg fetchedAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
       '{
-        boardName: ($boardName | select(length > 0)?),
-        accountEmail: ($accountEmail | select(length > 0)?),
+        boardName: ($boardName | if length > 0 then . else null end),
+        accountEmail: ($accountEmail | if length > 0 then . else null end),
         site: $site,
         auth: {
           authorized: false,
@@ -146,8 +146,8 @@ if [[ "$auth_output" == *"unauthorized"* || "$auth_output" == *"not logged in"* 
     --arg description "${auth_description:-Not authenticated.}" \
     --arg fetchedAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
     '{
-      boardName: ($boardName | select(length > 0)?),
-      accountEmail: ($accountEmail | select(length > 0)?),
+      boardName: ($boardName | if length > 0 then . else null end),
+      accountEmail: ($accountEmail | if length > 0 then . else null end),
       site: $site,
       auth: {
         authorized: false,
@@ -259,8 +259,8 @@ fi
   --argjson tickets "$tickets_json" \
   --argjson stories "$stories_json" \
   '{
-    boardName: ($boardName | select(length > 0)?),
-    accountEmail: ($accountEmail | select(length > 0)?),
+    boardName: ($boardName | if length > 0 then . else null end),
+    accountEmail: ($accountEmail | if length > 0 then . else null end),
     site: $site,
     auth: {
       authorized: true,
