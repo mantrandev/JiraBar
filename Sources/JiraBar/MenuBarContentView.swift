@@ -102,7 +102,8 @@ struct MenuBarContentView: View {
         }
     }
 
-    private static func openSettingsWindow() {
+    @MainActor private static func openSettingsWindow() {
+        NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
 
@@ -112,6 +113,14 @@ struct MenuBarContentView: View {
                 window.collectionBehavior.insert(.moveToActiveSpace)
                 window.orderFrontRegardless()
                 window.makeKeyAndOrderFront(nil)
+
+                NotificationCenter.default.addObserver(
+                    forName: NSWindow.willCloseNotification,
+                    object: window,
+                    queue: .main
+                ) { _ in
+                    NSApp.setActivationPolicy(.accessory)
+                }
             }
         }
     }
