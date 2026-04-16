@@ -12,6 +12,8 @@ struct MenuBarContentView: View {
                 }
                 if !self.model.snapshot.site.isEmpty {
                     Text(self.model.snapshot.site)
+                } else if !self.model.preferredSite.isEmpty {
+                    Text("Configured: \(self.model.preferredSite)")
                 }
                 Text(self.model.snapshot.auth.description)
             }
