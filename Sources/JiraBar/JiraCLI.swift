@@ -28,8 +28,11 @@ struct JiraCLI {
             throw ShellCommandError.failedCommand("Set your Jira site in Settings before logging in.")
         }
 
+        // Open in Terminal so acli gets a real TTY for the post-browser site selection prompt.
+        let cmd = "source ~/.zshrc 2>/dev/null; acli jira auth login --web; exit"
         try self.launchShell(
-            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web --site \(Self.escape(trimmedSite))")
+            "osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script \"\(cmd)\"' -e 'end tell'"
+        )
     }
 
     func logout() async throws {
