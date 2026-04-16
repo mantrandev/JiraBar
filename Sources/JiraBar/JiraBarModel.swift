@@ -18,14 +18,14 @@ final class JiraBarModel: ObservableObject {
     }
     @Published var maxItemsPerSection: Int {
         didSet {
-            self.maxItemsPerSection = min(max(self.maxItemsPerSection, 3), 20)
             UserDefaults.standard.set(self.maxItemsPerSection, forKey: DefaultsKey.maxItemsPerSection)
         }
     }
     @Published var preferredSite: String {
         didSet {
-            self.preferredSite = self.preferredSite.trimmingCharacters(in: .whitespacesAndNewlines)
-            UserDefaults.standard.set(self.preferredSite, forKey: DefaultsKey.preferredSite)
+            UserDefaults.standard.set(
+                self.preferredSite.trimmingCharacters(in: .whitespacesAndNewlines),
+                forKey: DefaultsKey.preferredSite)
         }
     }
     @Published var isRefreshing = false
