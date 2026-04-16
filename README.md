@@ -8,6 +8,8 @@
   <circle cx="10" cy="95" r="2.5" fill="black"/>
   <circle cx="42" cy="95" r="4.5" fill="black"/>
 </svg>
+<img width="749" height="562" alt="demo" src="https://github.com/user-attachments/assets/312770c9-b110-467a-9d5a-cba86ee0ba2e" />
+
 
 
 # JiraBar 🎟️ — May your sprint never go untracked.
