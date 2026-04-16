@@ -124,12 +124,18 @@ final class JiraBarModel: ObservableObject {
             success: "Jira login successful.")
     }
 
-    func logout() async {
-        await self.runAction(progress: "Logging out…", refreshAfter: false) {
-            try await self.cli.logout()
-            return "Logged out from Jira."
-        }
+    func logout() {
         self.snapshot = .empty
+        self.lastActionMessage = nil
+        self.lastErrorMessage = nil
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await self.cli.logout()
+            } catch {
+                self.lastErrorMessage = error.localizedDescription
+            }
+        }
     }
 
     func switchAccount() async {

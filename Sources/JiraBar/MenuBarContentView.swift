@@ -76,7 +76,7 @@ struct MenuBarContentView: View {
                     .disabled(self.model.isPerformingAction)
 
                     Button("Logout") {
-                        Task { await self.model.logout() }
+                        self.model.logout()
                     }
                     .disabled(self.model.isPerformingAction)
                 } else {

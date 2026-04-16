@@ -76,7 +76,7 @@ struct SettingsView: View {
                 .disabled(self.model.preferredSite.isEmpty)
 
                 Button("Logout") {
-                    Task { await self.model.logout() }
+                    self.model.logout()
                 }
                 .disabled(!self.model.snapshot.auth.authorized)
             }
