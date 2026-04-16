@@ -9,7 +9,8 @@
   <circle cx="42" cy="95" r="4.5" fill="black"/>
 </svg>
 
-# JiraBar 🎟️ — May your sprint never go untracked.
+
+# JiraBar 🎟️ — Track your Jira tasks faster, right from the menu bar.
 
 Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows parent stories and your not-done tickets, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
