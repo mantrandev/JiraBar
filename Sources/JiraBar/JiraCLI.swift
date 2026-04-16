@@ -29,7 +29,7 @@ struct JiraCLI {
         }
 
         try self.launchShell(
-            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web")
+            "source ~/.zshrc 2>/dev/null; exec acli jira auth login --web --site \(Self.escape(trimmedSite))")
     }
 
     func logout() async throws {
