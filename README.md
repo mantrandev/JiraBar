@@ -10,7 +10,7 @@
 </svg>
 
 
-# JiraBar 🎟️ — Track your Jira tasks faster, right from the menu bar.
+# JiraBar 🎟️ — Zero context switch. Full Jira control in menu bar and CLI.
 
 Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows parent stories and your not-done tickets, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
