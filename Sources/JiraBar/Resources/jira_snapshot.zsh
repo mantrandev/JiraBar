@@ -143,7 +143,7 @@ if [[ "$auth_output" == *"unauthorized"* || "$auth_output" == *"not logged in"* 
     --arg boardName "$board_name" \
     --arg accountEmail "$account_email" \
     --arg site "$site" \
-    --arg description "${auth_description:-Not authenticated.}" \
+    --arg description "Not authenticated. Use Login to connect Jira." \
     --arg fetchedAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
     '{
       boardName: ($boardName | if length > 0 then . else null end),
