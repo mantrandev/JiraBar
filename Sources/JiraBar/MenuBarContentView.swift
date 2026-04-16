@@ -89,7 +89,7 @@ struct MenuBarContentView: View {
 
             Section {
                 Button("Settings…") {
-                    Self.openSettingsWindow()
+                    Self.openSettingsWindow(model: self.model)
                 }
 
                 Button("Quit JiraBar") {
@@ -102,30 +102,37 @@ struct MenuBarContentView: View {
         }
     }
 
-    @MainActor private static func openSettingsWindow() {
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+    private static var settingsWindow: NSWindow?
 
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(100))
-            for window in NSApp.windows {
-                guard window.title.contains("Settings") else { continue }
-                window.collectionBehavior.insert(.moveToActiveSpace)
-                window.orderFrontRegardless()
-                window.makeKeyAndOrderFront(nil)
+    @MainActor private static func openSettingsWindow(model: JiraBarModel) {
+        if let existing = settingsWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
 
-                NotificationCenter.default.addObserver(
-                    forName: NSWindow.willCloseNotification,
-                    object: window,
-                    queue: .main
-                ) { _ in
-                    Task { @MainActor in
-                        NSApp.setActivationPolicy(.accessory)
-                    }
-                }
+        let hosting = NSHostingController(rootView: SettingsView(model: model))
+        let window = NSWindow(contentViewController: hosting)
+        window.title = "JiraBar Settings"
+        window.styleMask = [.titled, .closable, .fullSizeContentView]
+        window.collectionBehavior = [.moveToActiveSpace]
+        window.center()
+        settingsWindow = window
+
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { _ in
+            Task { @MainActor in
+                NSApp.setActivationPolicy(.accessory)
+                settingsWindow = nil
             }
         }
+
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
     }
 }
 
