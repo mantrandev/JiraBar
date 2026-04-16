@@ -7,33 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA0000000000000000000101 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000201 /* AppDelegate.swift */; };
-		AA0000000000000000000102 /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000202 /* AppResources.swift */; };
-		AA0000000000000000000103 /* JiraBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000203 /* JiraBarApp.swift */; };
-		AA0000000000000000000104 /* JiraBarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000204 /* JiraBarModel.swift */; };
-		AA0000000000000000000105 /* JiraCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000205 /* JiraCLI.swift */; };
-		AA0000000000000000000106 /* JiraModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000206 /* JiraModels.swift */; };
-		AA0000000000000000000107 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000207 /* MenuBarContentView.swift */; };
-		AA0000000000000000000108 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000208 /* SettingsView.swift */; };
-		AA0000000000000000000109 /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000209 /* ShellCommandRunner.swift */; };
-		AA0000000000000000000110 /* jira_snapshot.zsh in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000210 /* jira_snapshot.zsh */; };
+		AC2D9B122F91402A004592D7 /* jira_snapshot.zsh in Resources */ = {isa = PBXBuildFile; fileRef = AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */; };
+		AC2D9B132F91402A004592D7 /* menubar_icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = AC2D9B022F91402A004592D7 /* menubar_icon.svg */; };
+		AC2D9B142F91402A004592D7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0B2F91402A004592D7 /* SettingsView.swift */; };
+		AC2D9B152F91402A004592D7 /* JiraSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0E2F91402A004592D7 /* JiraSnapshotTests.swift */; };
+		AC2D9B162F91402A004592D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B042F91402A004592D7 /* AppDelegate.swift */; };
+		AC2D9B172F91402A004592D7 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0A2F91402A004592D7 /* MenuBarContentView.swift */; };
+		AC2D9B182F91402A004592D7 /* JiraCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B082F91402A004592D7 /* JiraCLI.swift */; };
+		AC2D9B192F91402A004592D7 /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B052F91402A004592D7 /* AppResources.swift */; };
+		AC2D9B1A2F91402A004592D7 /* JiraModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B092F91402A004592D7 /* JiraModels.swift */; };
+		AC2D9B1B2F91402A004592D7 /* JiraBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B062F91402A004592D7 /* JiraBarApp.swift */; };
+		AC2D9B1C2F91402A004592D7 /* JiraBarModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B072F91402A004592D7 /* JiraBarModel.swift */; };
+		AC2D9B1D2F91402A004592D7 /* ShellCommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0C2F91402A004592D7 /* ShellCommandRunner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA0000000000000000000201 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000202 /* AppResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/AppResources.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000203 /* JiraBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraBarApp.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000204 /* JiraBarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraBarModel.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000205 /* JiraCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraCLI.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000206 /* JiraModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/JiraModels.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000207 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/MenuBarContentView.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000208 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/SettingsView.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000209 /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/JiraBar/ShellCommandRunner.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000210 /* jira_snapshot.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.zsh; path = Sources/JiraBar/Resources/jira_snapshot.zsh; sourceTree = SOURCE_ROOT; };
 		AA0000000000000000000211 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		AA0000000000000000000212 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = SOURCE_ROOT; };
-		AA0000000000000000000213 /* package_app.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Scripts/package_app.sh; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000213 /* Scripts/package_app.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Scripts/package_app.sh; sourceTree = SOURCE_ROOT; };
 		AA0000000000000000000214 /* JiraBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JiraBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = jira_snapshot.zsh; sourceTree = "<group>"; };
+		AC2D9B022F91402A004592D7 /* menubar_icon.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = menubar_icon.svg; sourceTree = "<group>"; };
+		AC2D9B042F91402A004592D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AC2D9B052F91402A004592D7 /* AppResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
+		AC2D9B062F91402A004592D7 /* JiraBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraBarApp.swift; sourceTree = "<group>"; };
+		AC2D9B072F91402A004592D7 /* JiraBarModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraBarModel.swift; sourceTree = "<group>"; };
+		AC2D9B082F91402A004592D7 /* JiraCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraCLI.swift; sourceTree = "<group>"; };
+		AC2D9B092F91402A004592D7 /* JiraModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraModels.swift; sourceTree = "<group>"; };
+		AC2D9B0A2F91402A004592D7 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		AC2D9B0B2F91402A004592D7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AC2D9B0C2F91402A004592D7 /* ShellCommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellCommandRunner.swift; sourceTree = "<group>"; };
+		AC2D9B0E2F91402A004592D7 /* JiraSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraSnapshotTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,30 +54,14 @@
 		AA0000000000000000000401 = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000402 /* JiraBar */,
+				AC2D9B0D2F91402A004592D7 /* Sources */,
+				AC2D9B112F91402A004592D7 /* Tests */,
 				AA0000000000000000000404 /* Scripts */,
 				AA0000000000000000000212 /* Package.swift */,
 				AA0000000000000000000211 /* README.md */,
 				AA0000000000000000000403 /* Products */,
 			);
 			sourceTree = "<group>";
-		};
-		AA0000000000000000000402 /* JiraBar */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000000000000000000201 /* AppDelegate.swift */,
-				AA0000000000000000000202 /* AppResources.swift */,
-				AA0000000000000000000203 /* JiraBarApp.swift */,
-				AA0000000000000000000204 /* JiraBarModel.swift */,
-				AA0000000000000000000205 /* JiraCLI.swift */,
-				AA0000000000000000000206 /* JiraModels.swift */,
-				AA0000000000000000000207 /* MenuBarContentView.swift */,
-				AA0000000000000000000208 /* SettingsView.swift */,
-				AA0000000000000000000209 /* ShellCommandRunner.swift */,
-				AA0000000000000000000405 /* Resources */,
-			);
-			path = Sources/JiraBar;
-			sourceTree = SOURCE_ROOT;
 		};
 		AA0000000000000000000403 /* Products */ = {
 			isa = PBXGroup;
@@ -86,17 +74,59 @@
 		AA0000000000000000000404 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000213 /* package_app.sh */,
+				AA0000000000000000000213 /* Scripts/package_app.sh */,
 			);
 			path = Scripts;
 			sourceTree = SOURCE_ROOT;
 		};
-		AA0000000000000000000405 /* Resources */ = {
+		AC2D9B032F91402A004592D7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000210 /* jira_snapshot.zsh */,
+				AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */,
+				AC2D9B022F91402A004592D7 /* menubar_icon.svg */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		AC2D9B0D2F91402A004592D7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B032F91402A004592D7 /* Resources */,
+				AC2D9B042F91402A004592D7 /* AppDelegate.swift */,
+				AC2D9B052F91402A004592D7 /* AppResources.swift */,
+				AC2D9B062F91402A004592D7 /* JiraBarApp.swift */,
+				AC2D9B072F91402A004592D7 /* JiraBarModel.swift */,
+				AC2D9B082F91402A004592D7 /* JiraCLI.swift */,
+				AC2D9B092F91402A004592D7 /* JiraModels.swift */,
+				AC2D9B0A2F91402A004592D7 /* MenuBarContentView.swift */,
+				AC2D9B0B2F91402A004592D7 /* SettingsView.swift */,
+				AC2D9B0C2F91402A004592D7 /* ShellCommandRunner.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		AC2D9B0F2F91402A004592D7 /* JiraBarTests */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B0E2F91402A004592D7 /* JiraSnapshotTests.swift */,
+			);
+			path = JiraBarTests;
+			sourceTree = "<group>";
+		};
+		AC2D9B102F91402A004592D7 /* JiraMenuTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = JiraMenuTests;
+			sourceTree = "<group>";
+		};
+		AC2D9B112F91402A004592D7 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B0F2F91402A004592D7 /* JiraBarTests */,
+				AC2D9B102F91402A004592D7 /* JiraMenuTests */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,7 +186,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA0000000000000000000110 /* jira_snapshot.zsh in Resources */,
+				AC2D9B122F91402A004592D7 /* jira_snapshot.zsh in Resources */,
+				AC2D9B132F91402A004592D7 /* menubar_icon.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,15 +198,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA0000000000000000000101 /* AppDelegate.swift in Sources */,
-				AA0000000000000000000102 /* AppResources.swift in Sources */,
-				AA0000000000000000000103 /* JiraBarApp.swift in Sources */,
-				AA0000000000000000000104 /* JiraBarModel.swift in Sources */,
-				AA0000000000000000000105 /* JiraCLI.swift in Sources */,
-				AA0000000000000000000106 /* JiraModels.swift in Sources */,
-				AA0000000000000000000107 /* MenuBarContentView.swift in Sources */,
-				AA0000000000000000000108 /* SettingsView.swift in Sources */,
-				AA0000000000000000000109 /* ShellCommandRunner.swift in Sources */,
+				AC2D9B142F91402A004592D7 /* SettingsView.swift in Sources */,
+				AC2D9B162F91402A004592D7 /* AppDelegate.swift in Sources */,
+				AC2D9B172F91402A004592D7 /* MenuBarContentView.swift in Sources */,
+				AC2D9B182F91402A004592D7 /* JiraCLI.swift in Sources */,
+				AC2D9B192F91402A004592D7 /* AppResources.swift in Sources */,
+				AC2D9B1A2F91402A004592D7 /* JiraModels.swift in Sources */,
+				AC2D9B1B2F91402A004592D7 /* JiraBarApp.swift in Sources */,
+				AC2D9B1C2F91402A004592D7 /* JiraBarModel.swift in Sources */,
+				AC2D9B1D2F91402A004592D7 /* ShellCommandRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

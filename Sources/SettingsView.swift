@@ -66,12 +66,12 @@ struct SettingsView: View {
                 }
 
                 Button("Login") {
-                    Task { await self.model.login() }
+                    Task { self.model.login() }
                 }
                 .disabled(self.model.preferredSite.isEmpty)
 
                 Button("Switch Account") {
-                    Task { await self.model.switchAccount() }
+                    Task { self.model.switchAccount() }
                 }
                 .disabled(self.model.preferredSite.isEmpty)
 

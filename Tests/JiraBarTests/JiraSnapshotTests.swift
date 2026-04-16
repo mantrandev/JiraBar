@@ -1,10 +1,9 @@
 import Foundation
-import Testing
+import XCTest
 @testable import JiraBar
 
-struct JiraSnapshotTests {
-    @Test
-    func decodesSnapshotPayload() throws {
+final class JiraSnapshotTests: XCTestCase {
+    func testDecodesSnapshotPayload() throws {
         let json = """
         {
           "boardName": "Personal Scrum",
@@ -39,17 +38,16 @@ struct JiraSnapshotTests {
         decoder.dateDecodingStrategy = .iso8601
         let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
 
-        #expect(snapshot.boardName == "Personal Scrum")
-        #expect(snapshot.accountEmail == "person@example.com")
-        #expect(snapshot.auth.authorized)
-        #expect(snapshot.stories.first?.key == "TEAM-100")
-        #expect(snapshot.tickets.first?.summary == "Child ticket")
+        XCTAssertEqual(snapshot.boardName, "Personal Scrum")
+        XCTAssertEqual(snapshot.accountEmail, "person@example.com")
+        XCTAssertTrue(snapshot.auth.authorized)
+        XCTAssertEqual(snapshot.stories.first?.key, "TEAM-100")
+        XCTAssertEqual(snapshot.tickets.first?.summary, "Child ticket")
     }
 
-    @Test
-    func workflowStatusLabelsMatchDirectJiraTransitions() {
-        #expect(JiraWorkflowStatus.inProgress.label == "In Progress")
-        #expect(JiraWorkflowStatus.prod.label == "Wait to build PROD")
-        #expect(JiraWorkflowStatus.done.label == "DONE")
+    func testWorkflowStatusLabelsMatchDirectJiraTransitions() {
+        XCTAssertEqual(JiraWorkflowStatus.inProgress.label, "In Progress")
+        XCTAssertEqual(JiraWorkflowStatus.prod.label, "Wait to build PROD")
+        XCTAssertEqual(JiraWorkflowStatus.done.label, "DONE")
     }
 }
