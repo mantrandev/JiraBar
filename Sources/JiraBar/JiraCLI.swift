@@ -23,30 +23,14 @@ struct JiraCLI {
         return try decoder.decode(JiraSnapshot.self, from: data)
     }
 
-    func login(site: String) async throws {
-        let trimmedSite = try self.validatedSite(site)
+    func login(site: String) throws {
+        _ = try self.validatedSite(site)
 
-        let output = try await ShellCommandRunner.runInteractive(
+        // Open in Terminal so acli gets a real TTY for the post-browser site selection prompt.
+        let cmd = self.shellPreamble + "acli jira auth login --web; exit"
+        try ShellCommandRunner.launch(
             executableURL: self.zshURL,
-            arguments: ["-lc", self.shellPreamble + "acli jira auth login --web"]
-        ) { accumulated in
-            let lines = accumulated.components(separatedBy: .newlines)
-            guard lines.contains(where: { $0.contains(".atlassian.net") || $0.contains("Select") }) else {
-                return nil
-            }
-            for line in lines {
-                guard line.contains(trimmedSite) else { continue }
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-                if let digit = trimmed.first, digit.isNumber {
-                    return "\(digit)\n"
-                }
-            }
-            return "1\n"
-        }
-
-        guard output.exitCode == 0 else {
-            throw ShellCommandError.failedCommand(output.combinedOutput)
-        }
+            arguments: ["-lc", "osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script \"\(cmd)\"' -e 'end tell'"])
     }
 
     func logout() async throws {

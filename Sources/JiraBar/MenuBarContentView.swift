@@ -71,7 +71,7 @@ struct MenuBarContentView: View {
 
                 if self.model.snapshot.auth.authorized {
                     Button("Switch Account") {
-                        Task { await self.model.switchAccount() }
+                        self.model.switchAccount()
                     }
                     .disabled(self.model.isPerformingAction)
 
@@ -81,7 +81,7 @@ struct MenuBarContentView: View {
                     .disabled(self.model.isPerformingAction)
                 } else {
                     Button("Login") {
-                        Task { await self.model.login() }
+                        self.model.login()
                     }
                     .disabled(self.model.isPerformingAction)
                 }

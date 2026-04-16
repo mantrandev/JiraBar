@@ -1,5 +1,6 @@
-import Foundation
+import AppKit
 import Combine
+import Foundation
 
 @MainActor
 final class JiraBarModel: ObservableObject {
@@ -77,6 +78,18 @@ final class JiraBarModel: ObservableObject {
         return "ticket"
     }
 
+    var menuBarImage: NSImage? {
+        guard self.snapshot.auth.authorized, !self.isPerformingAction else {
+            return nil
+        }
+        guard let image = NSImage(named: "MenuBarIcon") else {
+            return nil
+        }
+        image.isTemplate = true
+        image.size = NSSize(width: 18, height: 18)
+        return image
+    }
+
     var visibleStories: [JiraTicket] {
         Array(self.snapshot.stories.prefix(self.maxItemsPerSection))
     }
@@ -117,11 +130,19 @@ final class JiraBarModel: ObservableObject {
         }
     }
 
-    func login() async {
-        await self.performWebAuth(
-            progress: "Opening Jira login…",
-            pending: "Complete Jira login in your browser.",
-            success: "Jira login successful.")
+    func login() {
+        guard !self.isPerformingAction else { return }
+        self.isPerformingAction = true
+        self.lastActionMessage = "Opening Jira login…"
+        self.lastErrorMessage = nil
+        do {
+            try self.cli.login(site: self.preferredSite)
+            self.lastActionMessage = "Complete Jira login in your browser."
+            self.startAuthPolling(successMessage: "Jira login successful.", preferredSite: self.preferredSite)
+        } catch {
+            self.isPerformingAction = false
+            self.lastErrorMessage = error.localizedDescription
+        }
     }
 
     func logout() {
@@ -138,19 +159,19 @@ final class JiraBarModel: ObservableObject {
         }
     }
 
-    func switchAccount() async {
-        await self.performWebAuth(
-            progress: "Switching Jira account…",
-            pending: "Complete account switching in your browser.",
-            success: "Jira account updated.")
-    }
-
-    private func performWebAuth(progress: String, pending: String, success: String) async {
-        await self.runAction(progress: progress, refreshAfter: false) {
-            try await self.cli.login(site: self.preferredSite)
-            return pending
+    func switchAccount() {
+        guard !self.isPerformingAction else { return }
+        self.isPerformingAction = true
+        self.lastActionMessage = "Switching Jira account…"
+        self.lastErrorMessage = nil
+        do {
+            try self.cli.login(site: self.preferredSite)
+            self.lastActionMessage = "Complete account switching in your browser."
+            self.startAuthPolling(successMessage: "Jira account updated.", preferredSite: self.preferredSite)
+        } catch {
+            self.isPerformingAction = false
+            self.lastErrorMessage = error.localizedDescription
         }
-        self.startAuthPolling(successMessage: success, preferredSite: self.preferredSite)
     }
 
     func openInBrowser(_ ticket: JiraTicket) async {
@@ -230,6 +251,7 @@ final class JiraBarModel: ObservableObject {
     private func startAuthPolling(successMessage: String, preferredSite: String) {
         Task { [weak self] in
             guard let self else { return }
+            defer { self.isPerformingAction = false }
 
             for _ in 0..<45 {
                 try? await Task.sleep(for: .seconds(2))
@@ -237,10 +259,18 @@ final class JiraBarModel: ObservableObject {
 
                 if self.snapshot.auth.authorized {
                     self.lastActionMessage = successMessage
+                    self.closeTerminal()
                     return
                 }
             }
         }
+    }
+
+    private func closeTerminal() {
+        let script = "osascript -e 'tell application \"Terminal\" to close (every window whose name contains \"acli\")' -e 'if (count of windows of application \"Terminal\") is 0 then tell application \"Terminal\" to quit'"
+        try? ShellCommandRunner.launch(
+            executableURL: URL(fileURLWithPath: "/bin/zsh"),
+            arguments: ["-lc", script])
     }
 
     private static let relativeFormatter: RelativeDateTimeFormatter = {
