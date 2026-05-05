@@ -167,9 +167,10 @@ private struct TicketRowMenu: View {
             }
             .disabled(self.model.isPerformingAction)
 
-            if !self.model.snapshot.projectStatuses.isEmpty {
+            let statuses = self.model.snapshot.statuses(for: self.ticket)
+            if !statuses.isEmpty {
                 Menu("Move to") {
-                    ForEach(self.model.snapshot.projectStatuses, id: \.self) { statusName in
+                    ForEach(statuses, id: \.self) { statusName in
                         Button(statusName) {
                             Task { await self.model.move(self.ticket, to: statusName) }
                         }

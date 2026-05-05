@@ -204,19 +204,31 @@ tickets_json="$(printf '%s' "$tickets_raw" | normalize_search_json)"
 
 project_key="$(printf '%s' "$tickets_json" | "$jq_bin" -r '.[0].key // "" | split("-") | .[0]' 2>/dev/null || true)"
 
-project_statuses='[]'
+statuses_by_type='{}'
 if [[ -n "$project_key" ]]; then
   statuses_raw="$("$acli_bin" jira project statuses --project "$project_key" --json 2>/dev/null || printf '[]')"
-  project_statuses="$(printf '%s' "$statuses_raw" | "$jq_bin" -c '
-    if type == "array" then .
-    elif .statuses? then .statuses
-    elif .values? then .values
-    elif .data?.statuses? then .data.statuses
-    else []
-    end
-    | map(if type == "object" then .name else . end)
-    | map(select(type == "string" and length > 0))
-  ' 2>/dev/null || printf '[]')"
+  statuses_by_type="$(printf '%s' "$statuses_raw" | "$jq_bin" -c '
+    def get_items:
+      if type == "array" then .
+      elif .statuses? then .statuses
+      elif .values? then .values
+      elif .data?.statuses? then .data.statuses
+      else []
+      end;
+
+    get_items
+    | map(select(type == "object"))
+    | map({
+        key: (.name // .issueType // ""),
+        value: (
+          (.statuses // .transitions // [])
+          | map(if type == "object" then .name else . end)
+          | map(select(type == "string" and length > 0))
+        )
+      })
+    | map(select(.key | length > 0))
+    | from_entries
+  ' 2>/dev/null || printf '{}')"
 fi
 
 stories_child_raw="$("$acli_bin" jira workitem search --jql "$stories_child_jql" --fields "key" --paginate --json 2>/dev/null || printf '[]')"
@@ -275,7 +287,7 @@ fi
   --arg fetchedAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
   --argjson tickets "$tickets_json" \
   --argjson stories "$stories_json" \
-  --argjson projectStatuses "$project_statuses" \
+  --argjson statusesByType "$statuses_by_type" \
   '{
     boardName: ($boardName | if length > 0 then . else null end),
     accountEmail: ($accountEmail | if length > 0 then . else null end),
@@ -286,7 +298,7 @@ fi
     },
     stories: $stories,
     tickets: $tickets,
-    projectStatuses: $projectStatuses,
+    statusesByType: $statusesByType,
     errorMessage: null,
     fetchedAt: $fetchedAt
   }'

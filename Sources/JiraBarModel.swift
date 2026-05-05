@@ -201,15 +201,17 @@ final class JiraBarModel: ObservableObject {
     }
 
     func moveForward(_ ticket: JiraTicket) async {
+        let statuses = self.snapshot.statuses(for: ticket)
         await self.runAction(progress: "Moving \(ticket.key) forward…") {
-            try await self.cli.moveForward(ticket: ticket, statuses: self.snapshot.projectStatuses)
+            try await self.cli.moveForward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the next workflow state."
         }
     }
 
     func moveBackward(_ ticket: JiraTicket) async {
+        let statuses = self.snapshot.statuses(for: ticket)
         await self.runAction(progress: "Moving \(ticket.key) backward…") {
-            try await self.cli.moveBackward(ticket: ticket, statuses: self.snapshot.projectStatuses)
+            try await self.cli.moveBackward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the previous workflow state."
         }
     }

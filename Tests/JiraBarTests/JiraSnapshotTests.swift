@@ -45,13 +45,16 @@ final class JiraSnapshotTests: XCTestCase {
         XCTAssertEqual(snapshot.tickets.first?.summary, "Child ticket")
     }
 
-    func testDecodesProjectStatusesWhenPresent() throws {
+    func testDecodesStatusesByTypeWhenPresent() throws {
         let json = """
         {
           "site": "example.atlassian.net",
           "auth": { "authorized": true, "description": "Authenticated" },
           "stories": [], "tickets": [],
-          "projectStatuses": ["To Do", "In Progress", "Done"],
+          "statusesByType": {
+            "Story": ["To Do", "In Progress", "Done"],
+            "Bug": ["To Do", "In Progress", "Testing", "Done"]
+          },
           "errorMessage": null,
           "fetchedAt": "2026-04-16T13:00:00Z"
         }
@@ -59,10 +62,11 @@ final class JiraSnapshotTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
-        XCTAssertEqual(snapshot.projectStatuses, ["To Do", "In Progress", "Done"])
+        XCTAssertEqual(snapshot.statusesByType["Story"], ["To Do", "In Progress", "Done"])
+        XCTAssertEqual(snapshot.statusesByType["Bug"], ["To Do", "In Progress", "Testing", "Done"])
     }
 
-    func testProjectStatusesDefaultsToEmptyWhenAbsent() throws {
+    func testStatusesByTypeDefaultsToEmptyWhenAbsent() throws {
         let json = """
         {
           "site": "example.atlassian.net",
@@ -75,6 +79,23 @@ final class JiraSnapshotTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
-        XCTAssertEqual(snapshot.projectStatuses, [])
+        XCTAssertTrue(snapshot.statusesByType.isEmpty)
+    }
+
+    func testStatusesForTicketUsesIssueType() throws {
+        let snapshot = JiraSnapshot(
+            boardName: nil, accountEmail: nil, site: "", auth: .loggedOut,
+            stories: [], tickets: [],
+            statusesByType: [
+                "Story": ["To Do", "In Progress", "Done"],
+                "Bug": ["To Do", "Testing", "Done"]
+            ],
+            errorMessage: nil, fetchedAt: .distantPast)
+        let story = JiraTicket(issueType: "Story", key: "T-1", status: "To Do", summary: "")
+        let bug = JiraTicket(issueType: "Bug", key: "T-2", status: "To Do", summary: "")
+        let unknown = JiraTicket(issueType: "Epic", key: "T-3", status: "To Do", summary: "")
+        XCTAssertEqual(snapshot.statuses(for: story), ["To Do", "In Progress", "Done"])
+        XCTAssertEqual(snapshot.statuses(for: bug), ["To Do", "Testing", "Done"])
+        XCTAssertTrue(snapshot.statuses(for: unknown).isEmpty)
     }
 }

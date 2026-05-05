@@ -7,7 +7,7 @@ struct JiraSnapshot: Equatable, Sendable {
     var auth: JiraAuthState
     var stories: [JiraTicket]
     var tickets: [JiraTicket]
-    var projectStatuses: [String]
+    var statusesByType: [String: [String]]
     var errorMessage: String?
     var fetchedAt: Date
 
@@ -18,14 +18,20 @@ struct JiraSnapshot: Equatable, Sendable {
         auth: .loggedOut,
         stories: [],
         tickets: [],
-        projectStatuses: [],
+        statusesByType: [:],
         errorMessage: nil,
         fetchedAt: .distantPast)
+
+    func statuses(for ticket: JiraTicket) -> [String] {
+        if let s = statusesByType[ticket.issueType], !s.isEmpty { return s }
+        let key = statusesByType.keys.first { $0.caseInsensitiveCompare(ticket.issueType) == .orderedSame }
+        return key.flatMap { statusesByType[$0] } ?? []
+    }
 }
 
 extension JiraSnapshot: Codable {
     private enum CodingKeys: String, CodingKey {
-        case boardName, accountEmail, site, auth, stories, tickets, projectStatuses, errorMessage, fetchedAt
+        case boardName, accountEmail, site, auth, stories, tickets, statusesByType, errorMessage, fetchedAt
     }
 
     init(from decoder: Decoder) throws {
@@ -36,7 +42,7 @@ extension JiraSnapshot: Codable {
         self.auth = try c.decode(JiraAuthState.self, forKey: .auth)
         self.stories = try c.decode([JiraTicket].self, forKey: .stories)
         self.tickets = try c.decode([JiraTicket].self, forKey: .tickets)
-        self.projectStatuses = (try c.decodeIfPresent([String].self, forKey: .projectStatuses)) ?? []
+        self.statusesByType = (try c.decodeIfPresent([String: [String]].self, forKey: .statusesByType)) ?? [:]
         self.errorMessage = try c.decodeIfPresent(String.self, forKey: .errorMessage)
         self.fetchedAt = try c.decode(Date.self, forKey: .fetchedAt)
     }
@@ -49,7 +55,7 @@ extension JiraSnapshot: Codable {
         try c.encode(self.auth, forKey: .auth)
         try c.encode(self.stories, forKey: .stories)
         try c.encode(self.tickets, forKey: .tickets)
-        try c.encode(self.projectStatuses, forKey: .projectStatuses)
+        try c.encode(self.statusesByType, forKey: .statusesByType)
         try c.encodeIfPresent(self.errorMessage, forKey: .errorMessage)
         try c.encode(self.fetchedAt, forKey: .fetchedAt)
     }
