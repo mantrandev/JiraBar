@@ -156,25 +156,24 @@ private struct TicketRowMenu: View {
             .disabled(self.model.isPerformingAction)
 
             Divider()
-
             Button("Next Status") {
                 Task { await self.model.moveForward(self.ticket) }
             }
             .disabled(self.model.isPerformingAction)
-
             Button("Previous Status") {
                 Task { await self.model.moveBackward(self.ticket) }
             }
             .disabled(self.model.isPerformingAction)
 
-            let statuses = self.model.snapshot.statuses(for: self.ticket)
+            let statuses = self.model.statuses(for: self.ticket)
             if !statuses.isEmpty {
-                Menu("Move to") {
+                Menu("Move") {
                     ForEach(statuses, id: \.self) { statusName in
-                        Button(statusName) {
+                        let isCurrent = statusName.caseInsensitiveCompare(self.ticket.status) == .orderedSame
+                        Button(isCurrent ? "✓ \(statusName)" : statusName) {
                             Task { await self.model.move(self.ticket, to: statusName) }
                         }
-                        .disabled(self.model.isPerformingAction)
+                        .disabled(self.model.isPerformingAction || isCurrent)
                     }
                 }
             }

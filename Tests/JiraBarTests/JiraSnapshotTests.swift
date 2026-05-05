@@ -45,16 +45,14 @@ final class JiraSnapshotTests: XCTestCase {
         XCTAssertEqual(snapshot.tickets.first?.summary, "Child ticket")
     }
 
-    func testDecodesStatusesByTypeWhenPresent() throws {
+    func testDecodesSnapshotIgnoresUnknownFields() throws {
         let json = """
         {
           "site": "example.atlassian.net",
           "auth": { "authorized": true, "description": "Authenticated" },
           "stories": [], "tickets": [],
-          "statusesByType": {
-            "Story": ["To Do", "In Progress", "Done"],
-            "Bug": ["To Do", "In Progress", "Testing", "Done"]
-          },
+          "statusesByType": {"Bug": ["To Do", "Done"]},
+          "projectStatuses": ["To Do", "Done"],
           "errorMessage": null,
           "fetchedAt": "2026-04-16T13:00:00Z"
         }
@@ -62,40 +60,44 @@ final class JiraSnapshotTests: XCTestCase {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
-        XCTAssertEqual(snapshot.statusesByType["Story"], ["To Do", "In Progress", "Done"])
-        XCTAssertEqual(snapshot.statusesByType["Bug"], ["To Do", "In Progress", "Testing", "Done"])
+        XCTAssertEqual(snapshot.site, "example.atlassian.net")
+        XCTAssertTrue(snapshot.tickets.isEmpty)
     }
 
-    func testStatusesByTypeDefaultsToEmptyWhenAbsent() throws {
+    func testParseStatusesPerTypeFormat() {
         let json = """
-        {
-          "site": "example.atlassian.net",
-          "auth": { "authorized": true, "description": "Authenticated" },
-          "stories": [], "tickets": [],
-          "errorMessage": null,
-          "fetchedAt": "2026-04-16T13:00:00Z"
-        }
-        """
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
-        XCTAssertTrue(snapshot.statusesByType.isEmpty)
+        [
+          {"name": "Story", "statuses": [{"name": "To Do"}, {"name": "In Progress"}, {"name": "Done"}]},
+          {"name": "Bug", "statuses": [{"name": "To Do"}, {"name": "Testing"}, {"name": "Done"}]}
+        ]
+        """.data(using: .utf8)!
+        let result = JiraCLI.parseStatuses(from: json)
+        XCTAssertEqual(result["Story"], ["To Do", "In Progress", "Done"])
+        XCTAssertEqual(result["Bug"], ["To Do", "Testing", "Done"])
     }
 
-    func testStatusesForTicketUsesIssueType() throws {
-        let snapshot = JiraSnapshot(
-            boardName: nil, accountEmail: nil, site: "", auth: .loggedOut,
-            stories: [], tickets: [],
-            statusesByType: [
-                "Story": ["To Do", "In Progress", "Done"],
-                "Bug": ["To Do", "Testing", "Done"]
-            ],
-            errorMessage: nil, fetchedAt: .distantPast)
-        let story = JiraTicket(issueType: "Story", key: "T-1", status: "To Do", summary: "")
-        let bug = JiraTicket(issueType: "Bug", key: "T-2", status: "To Do", summary: "")
-        let unknown = JiraTicket(issueType: "Epic", key: "T-3", status: "To Do", summary: "")
-        XCTAssertEqual(snapshot.statuses(for: story), ["To Do", "In Progress", "Done"])
-        XCTAssertEqual(snapshot.statuses(for: bug), ["To Do", "Testing", "Done"])
-        XCTAssertTrue(snapshot.statuses(for: unknown).isEmpty)
+    func testParseStatusesFlatFormat() {
+        let json = """
+        [{"name": "To Do"}, {"name": "In Progress"}, {"name": "Done"}]
+        """.data(using: .utf8)!
+        let result = JiraCLI.parseStatuses(from: json)
+        XCTAssertEqual(result["*"], ["To Do", "In Progress", "Done"])
+    }
+
+    func testParseStatusesActualBoard() {
+        // Statuses from the real project board
+        let json = """
+        [
+          {"name": "TO DO"},
+          {"name": "IN PROGRESS"},
+          {"name": "TESTING"},
+          {"name": "BLOCK"},
+          {"name": "REVIEW"},
+          {"name": "WAIT TO BUILD PROD"},
+          {"name": "DONE"}
+        ]
+        """.data(using: .utf8)!
+        let result = JiraCLI.parseStatuses(from: json)
+        XCTAssertEqual(result["*"], ["TO DO", "IN PROGRESS", "TESTING", "BLOCK", "REVIEW", "WAIT TO BUILD PROD", "DONE"])
     }
 }

@@ -8,9 +8,11 @@ final class JiraBarModel: ObservableObject {
         static let refreshInterval = "jirabar.refreshInterval"
         static let maxItemsPerSection = "jirabar.maxItemsPerSection"
         static let preferredSite = "jirabar.preferredSite"
+        static let statusesByType = "jirabar.statusesByType"
     }
 
     @Published var snapshot: JiraSnapshot = .empty
+    @Published var statusesByType: [String: [String]] = [:]
     @Published var refreshInterval: RefreshInterval {
         didSet {
             UserDefaults.standard.set(self.refreshInterval.rawValue, forKey: DefaultsKey.refreshInterval)
@@ -47,13 +49,26 @@ final class JiraBarModel: ObservableObject {
         let storedMaxItems = UserDefaults.standard.integer(forKey: DefaultsKey.maxItemsPerSection)
         self.maxItemsPerSection = storedMaxItems == 0 ? 8 : min(max(storedMaxItems, 3), 20)
         self.preferredSite = UserDefaults.standard.string(forKey: DefaultsKey.preferredSite) ?? ""
+        self.statusesByType = (UserDefaults.standard.object(forKey: DefaultsKey.statusesByType) as? [String: [String]]) ?? [:]
 
         self.restartRefreshLoop()
-        Task { await self.refresh(force: true) }
+        Task {
+            await self.refresh(force: true)
+            if self.statusesByType.isEmpty && self.snapshot.auth.authorized {
+                await self.fetchAndCacheStatuses()
+            }
+        }
     }
 
     deinit {
         self.refreshTask?.cancel()
+    }
+
+    func statuses(for ticket: JiraTicket) -> [String] {
+        if let s = statusesByType[ticket.issueType], !s.isEmpty { return s }
+        let key = statusesByType.keys.first { $0.caseInsensitiveCompare(ticket.issueType) == .orderedSame }
+        if let k = key, let s = statusesByType[k], !s.isEmpty { return s }
+        return statusesByType["*"] ?? []
     }
 
     var menuBarTitle: String {
@@ -148,6 +163,7 @@ final class JiraBarModel: ObservableObject {
             do {
                 try await self.cli.login(site: self.preferredSite)
                 await self.refresh(force: true)
+                await self.fetchAndCacheStatuses()
                 self.lastActionMessage = "Jira login successful."
             } catch {
                 self.lastErrorMessage = error.localizedDescription
@@ -156,6 +172,8 @@ final class JiraBarModel: ObservableObject {
     }
 
     func logout() {
+        self.statusesByType = [:]
+        UserDefaults.standard.removeObject(forKey: DefaultsKey.statusesByType)
         self.snapshot = .empty
         self.lastActionMessage = nil
         self.lastErrorMessage = nil
@@ -179,6 +197,7 @@ final class JiraBarModel: ObservableObject {
             do {
                 try await self.cli.login(site: self.preferredSite)
                 await self.refresh(force: true)
+                await self.fetchAndCacheStatuses()
                 self.lastActionMessage = "Jira account updated."
             } catch {
                 self.lastErrorMessage = error.localizedDescription
@@ -201,7 +220,7 @@ final class JiraBarModel: ObservableObject {
     }
 
     func moveForward(_ ticket: JiraTicket) async {
-        let statuses = self.snapshot.statuses(for: ticket)
+        let statuses = self.statuses(for: ticket)
         await self.runAction(progress: "Moving \(ticket.key) forward…") {
             try await self.cli.moveForward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the next workflow state."
@@ -209,7 +228,7 @@ final class JiraBarModel: ObservableObject {
     }
 
     func moveBackward(_ ticket: JiraTicket) async {
-        let statuses = self.snapshot.statuses(for: ticket)
+        let statuses = self.statuses(for: ticket)
         await self.runAction(progress: "Moving \(ticket.key) backward…") {
             try await self.cli.moveBackward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the previous workflow state."
@@ -220,6 +239,26 @@ final class JiraBarModel: ObservableObject {
         await self.runAction(progress: "Moving \(ticket.key) to \(statusName)…") {
             try await self.cli.move(ticketKey: ticket.key, to: statusName)
             return "Moved \(ticket.key) to \(statusName)."
+        }
+    }
+
+    func refreshStatuses() {
+        Task { await self.fetchAndCacheStatuses() }
+    }
+
+    private func fetchAndCacheStatuses() async {
+        let firstKey = self.snapshot.tickets.first?.key ?? self.snapshot.stories.first?.key ?? ""
+        let projectKey = String(firstKey.split(separator: "-").first ?? "")
+        guard !projectKey.isEmpty else {
+            self.lastErrorMessage = "No project key — make sure tickets are loaded first."
+            return
+        }
+        do {
+            let fetched = try await self.cli.fetchStatuses(projectKey: projectKey)
+            self.statusesByType = fetched
+            UserDefaults.standard.set(fetched, forKey: DefaultsKey.statusesByType)
+        } catch {
+            self.lastErrorMessage = "Statuses: \(error.localizedDescription)"
         }
     }
 
