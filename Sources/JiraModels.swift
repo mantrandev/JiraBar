@@ -1,12 +1,13 @@
 import Foundation
 
-struct JiraSnapshot: Codable, Equatable, Sendable {
+struct JiraSnapshot: Equatable, Sendable {
     var boardName: String?
     var accountEmail: String?
     var site: String
     var auth: JiraAuthState
     var stories: [JiraTicket]
     var tickets: [JiraTicket]
+    var projectStatuses: [String]
     var errorMessage: String?
     var fetchedAt: Date
 
@@ -17,8 +18,41 @@ struct JiraSnapshot: Codable, Equatable, Sendable {
         auth: .loggedOut,
         stories: [],
         tickets: [],
+        projectStatuses: [],
         errorMessage: nil,
         fetchedAt: .distantPast)
+}
+
+extension JiraSnapshot: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case boardName, accountEmail, site, auth, stories, tickets, projectStatuses, errorMessage, fetchedAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.boardName = try c.decodeIfPresent(String.self, forKey: .boardName)
+        self.accountEmail = try c.decodeIfPresent(String.self, forKey: .accountEmail)
+        self.site = try c.decode(String.self, forKey: .site)
+        self.auth = try c.decode(JiraAuthState.self, forKey: .auth)
+        self.stories = try c.decode([JiraTicket].self, forKey: .stories)
+        self.tickets = try c.decode([JiraTicket].self, forKey: .tickets)
+        self.projectStatuses = (try c.decodeIfPresent([String].self, forKey: .projectStatuses)) ?? []
+        self.errorMessage = try c.decodeIfPresent(String.self, forKey: .errorMessage)
+        self.fetchedAt = try c.decode(Date.self, forKey: .fetchedAt)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encodeIfPresent(self.boardName, forKey: .boardName)
+        try c.encodeIfPresent(self.accountEmail, forKey: .accountEmail)
+        try c.encode(self.site, forKey: .site)
+        try c.encode(self.auth, forKey: .auth)
+        try c.encode(self.stories, forKey: .stories)
+        try c.encode(self.tickets, forKey: .tickets)
+        try c.encode(self.projectStatuses, forKey: .projectStatuses)
+        try c.encodeIfPresent(self.errorMessage, forKey: .errorMessage)
+        try c.encode(self.fetchedAt, forKey: .fetchedAt)
+    }
 }
 
 struct JiraAuthState: Codable, Equatable, Sendable {
@@ -50,59 +84,6 @@ struct JiraTicket: Codable, Equatable, Identifiable, Sendable {
             return self.status
         }
         return "\(self.issueType) • \(self.status)"
-    }
-}
-
-enum JiraWorkflowStatus: String, CaseIterable, Identifiable, Sendable {
-    case todo = "TO DO"
-    case inProgress = "In Progress"
-    case testing = "Testing"
-    case block = "Block"
-    case review = "Review"
-    case prod = "Wait to build PROD"
-    case done = "DONE"
-
-    var id: String { self.rawValue }
-
-    var label: String { self.rawValue }
-
-    static let orderedStatuses: [JiraWorkflowStatus] = [
-        .todo,
-        .inProgress,
-        .testing,
-        .block,
-        .review,
-        .prod,
-        .done,
-    ]
-
-    static func from(statusText: String) -> JiraWorkflowStatus? {
-        let normalized = statusText
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
-
-        return Self.orderedStatuses.first { status in
-            status.rawValue.lowercased() == normalized
-        }
-    }
-
-    static func next(after statusText: String) -> JiraWorkflowStatus? {
-        guard let currentIndex = Self.orderedStatuses.firstIndex(where: { $0.rawValue.caseInsensitiveCompare(statusText) == .orderedSame })
-        else {
-            return nil
-        }
-        let nextIndex = Self.orderedStatuses.index(after: currentIndex)
-        guard nextIndex < Self.orderedStatuses.endIndex else { return nil }
-        return Self.orderedStatuses[nextIndex]
-    }
-
-    static func previous(before statusText: String) -> JiraWorkflowStatus? {
-        guard let currentIndex = Self.orderedStatuses.firstIndex(where: { $0.rawValue.caseInsensitiveCompare(statusText) == .orderedSame })
-        else {
-            return nil
-        }
-        guard currentIndex > Self.orderedStatuses.startIndex else { return nil }
-        return Self.orderedStatuses[Self.orderedStatuses.index(before: currentIndex)]
     }
 }
 

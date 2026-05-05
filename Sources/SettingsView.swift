@@ -33,11 +33,8 @@ struct SettingsView: View {
                     }
                 }
 
-                if self.model.preferredSite.isEmpty {
-                    Text("Set your Jira domain here before logging in.")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("Login will use: \(self.model.preferredSite)")
+                if !self.model.preferredSite.isEmpty {
+                    Text("Login will switch to: \(self.model.preferredSite)")
                         .foregroundStyle(.secondary)
                 }
 
@@ -68,7 +65,7 @@ struct SettingsView: View {
                 Button("Login") {
                     Task { self.model.login() }
                 }
-                .disabled(self.model.preferredSite.isEmpty)
+                .disabled(self.model.isPerformingAction)
 
                 Button("Switch Account") {
                     Task { self.model.switchAccount() }

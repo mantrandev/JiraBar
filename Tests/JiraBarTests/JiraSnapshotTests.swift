@@ -45,9 +45,36 @@ final class JiraSnapshotTests: XCTestCase {
         XCTAssertEqual(snapshot.tickets.first?.summary, "Child ticket")
     }
 
-    func testWorkflowStatusLabelsMatchDirectJiraTransitions() {
-        XCTAssertEqual(JiraWorkflowStatus.inProgress.label, "In Progress")
-        XCTAssertEqual(JiraWorkflowStatus.prod.label, "Wait to build PROD")
-        XCTAssertEqual(JiraWorkflowStatus.done.label, "DONE")
+    func testDecodesProjectStatusesWhenPresent() throws {
+        let json = """
+        {
+          "site": "example.atlassian.net",
+          "auth": { "authorized": true, "description": "Authenticated" },
+          "stories": [], "tickets": [],
+          "projectStatuses": ["To Do", "In Progress", "Done"],
+          "errorMessage": null,
+          "fetchedAt": "2026-04-16T13:00:00Z"
+        }
+        """
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
+        XCTAssertEqual(snapshot.projectStatuses, ["To Do", "In Progress", "Done"])
+    }
+
+    func testProjectStatusesDefaultsToEmptyWhenAbsent() throws {
+        let json = """
+        {
+          "site": "example.atlassian.net",
+          "auth": { "authorized": true, "description": "Authenticated" },
+          "stories": [], "tickets": [],
+          "errorMessage": null,
+          "fetchedAt": "2026-04-16T13:00:00Z"
+        }
+        """
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let snapshot = try decoder.decode(JiraSnapshot.self, from: Data(json.utf8))
+        XCTAssertEqual(snapshot.projectStatuses, [])
     }
 }

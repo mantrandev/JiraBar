@@ -167,12 +167,14 @@ private struct TicketRowMenu: View {
             }
             .disabled(self.model.isPerformingAction)
 
-            Menu("Move to") {
-                ForEach(JiraWorkflowStatus.allCases) { status in
-                    Button(status.label) {
-                        Task { await self.model.move(self.ticket, to: status) }
+            if !self.model.snapshot.projectStatuses.isEmpty {
+                Menu("Move to") {
+                    ForEach(self.model.snapshot.projectStatuses, id: \.self) { statusName in
+                        Button(statusName) {
+                            Task { await self.model.move(self.ticket, to: statusName) }
+                        }
+                        .disabled(self.model.isPerformingAction)
                     }
-                    .disabled(self.model.isPerformingAction)
                 }
             }
         }

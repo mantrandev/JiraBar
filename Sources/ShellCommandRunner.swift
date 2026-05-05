@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 
 struct ShellOutput: Sendable {
@@ -155,6 +156,69 @@ enum ShellCommandRunner {
             do {
                 try process.run()
             } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
+    static func runWithPTY(
+        executableURL: URL,
+        arguments: [String],
+        environment: [String: String]? = nil,
+        autoRespond: @escaping @Sendable (String) -> String?) async throws -> ShellOutput
+    {
+        try await withCheckedThrowingContinuation { continuation in
+            let masterFD = posix_openpt(O_RDWR | O_NOCTTY)
+            guard masterFD >= 0, grantpt(masterFD) == 0, unlockpt(masterFD) == 0,
+                  let slavePathPtr = ptsname(masterFD) else {
+                continuation.resume(throwing: ShellCommandError.failedCommand("PTY creation failed"))
+                return
+            }
+            let slaveFD = Darwin.open(slavePathPtr, O_RDWR)
+            guard slaveFD >= 0 else {
+                close(masterFD)
+                continuation.resume(throwing: ShellCommandError.failedCommand("PTY slave open failed"))
+                return
+            }
+
+            let process = Self.makeProcess(executableURL: executableURL, arguments: arguments, environment: environment)
+            process.standardInput  = FileHandle(fileDescriptor: slaveFD,       closeOnDealloc: false)
+            process.standardOutput = FileHandle(fileDescriptor: dup(slaveFD),  closeOnDealloc: true)
+            process.standardError  = FileHandle(fileDescriptor: dup(slaveFD),  closeOnDealloc: true)
+
+            let masterHandle = FileHandle(fileDescriptor: masterFD, closeOnDealloc: true)
+            let state = InteractiveState()
+
+            masterHandle.readabilityHandler = { fh in
+                let chunk = fh.availableData
+                guard !chunk.isEmpty else { return }
+                state.lock.lock()
+                state.stdout += String(decoding: chunk, as: UTF8.self)
+                let accumulated = state.stdout
+                let done = state.responded
+                state.lock.unlock()
+                guard !done, let reply = autoRespond(accumulated) else { return }
+                state.lock.lock(); state.responded = true; state.lock.unlock()
+                masterHandle.write(Data(reply.utf8))
+            }
+
+            process.terminationHandler = { p in
+                masterHandle.readabilityHandler = nil
+                state.lock.lock()
+                let out = state.stdout
+                state.lock.unlock()
+                continuation.resume(returning: ShellOutput(
+                    exitCode: p.terminationStatus,
+                    standardOutput: out,
+                    standardError: ""))
+            }
+
+            do {
+                try process.run()
+                close(slaveFD)  // close slave in parent; child holds its own copies
+            } catch {
+                masterHandle.readabilityHandler = nil
+                close(slaveFD)
                 continuation.resume(throwing: error)
             }
         }

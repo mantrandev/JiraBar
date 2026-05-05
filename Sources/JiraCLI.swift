@@ -23,14 +23,24 @@ struct JiraCLI {
         return try decoder.decode(JiraSnapshot.self, from: data)
     }
 
-    func login(site: String) throws {
-        _ = try self.validatedSite(site)
-
-        // Open in Terminal so acli gets a real TTY for the post-browser site selection prompt.
-        let cmd = self.shellPreamble + "acli jira auth login --web; exit"
-        try ShellCommandRunner.launch(
+    func login(site: String) async throws {
+        _ = try await ShellCommandRunner.runWithPTY(
             executableURL: self.zshURL,
-            arguments: ["-lc", "osascript -e 'tell application \"Terminal\"' -e 'activate' -e 'do script \"\(cmd)\"' -e 'end tell'"])
+            arguments: ["-lc", self.shellPreamble + "acli jira auth login --web"],
+            environment: ["TERM": "xterm-256color"],
+            autoRespond: { output in
+                let plain = output.replacingOccurrences(
+                    of: #"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])"#,
+                    with: "",
+                    options: .regularExpression)
+                guard plain.contains("enter submit") || plain.contains("↑") else { return nil }
+                return "\r"
+            })
+
+        let trimmedSite = site.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedSite.isEmpty {
+            try await self.runShell("acli jira auth switch --site \(Self.escape(trimmedSite))")
+        }
     }
 
     func logout() async throws {
@@ -50,22 +60,34 @@ struct JiraCLI {
         try await self.runShell("acli jira workitem assign --key \(Self.escape(ticketKey)) --assignee '@me' --yes")
     }
 
-    func moveForward(ticket: JiraTicket) async throws {
-        guard let next = JiraWorkflowStatus.next(after: ticket.status) else {
+    func moveForward(ticket: JiraTicket, statuses: [String]) async throws {
+        guard let next = Self.nextStatus(after: ticket.status, in: statuses) else {
             throw ShellCommandError.failedCommand("No next workflow state for \(ticket.key) (current: '\(ticket.status)').")
         }
         try await self.move(ticketKey: ticket.key, to: next)
     }
 
-    func moveBackward(ticket: JiraTicket) async throws {
-        guard let previous = JiraWorkflowStatus.previous(before: ticket.status) else {
+    func moveBackward(ticket: JiraTicket, statuses: [String]) async throws {
+        guard let previous = Self.previousStatus(before: ticket.status, in: statuses) else {
             throw ShellCommandError.failedCommand("No previous workflow state for \(ticket.key) (current: '\(ticket.status)').")
         }
         try await self.move(ticketKey: ticket.key, to: previous)
     }
 
-    func move(ticketKey: String, to status: JiraWorkflowStatus) async throws {
-        try await self.runShell("acli jira workitem transition --key \(Self.escape(ticketKey)) --status \(Self.escape(status.rawValue)) --yes")
+    func move(ticketKey: String, to statusName: String) async throws {
+        try await self.runShell("acli jira workitem transition --key \(Self.escape(ticketKey)) --status \(Self.escape(statusName)) --yes")
+    }
+
+    private static func nextStatus(after statusText: String, in statuses: [String]) -> String? {
+        guard let idx = statuses.firstIndex(where: { $0.caseInsensitiveCompare(statusText) == .orderedSame }),
+              idx + 1 < statuses.count else { return nil }
+        return statuses[idx + 1]
+    }
+
+    private static func previousStatus(before statusText: String, in statuses: [String]) -> String? {
+        guard let idx = statuses.firstIndex(where: { $0.caseInsensitiveCompare(statusText) == .orderedSame }),
+              idx > 0 else { return nil }
+        return statuses[idx - 1]
     }
 
     private func validatedSite(_ site: String) throws -> String {

@@ -141,15 +141,17 @@ final class JiraBarModel: ObservableObject {
     func login() {
         guard !self.isPerformingAction else { return }
         self.isPerformingAction = true
-        self.lastActionMessage = "Opening Jira login…"
+        self.lastActionMessage = "Complete Jira login in your browser."
         self.lastErrorMessage = nil
-        do {
-            try self.cli.login(site: self.preferredSite)
-            self.lastActionMessage = "Complete Jira login in your browser."
-            self.startAuthPolling(successMessage: "Jira login successful.", preferredSite: self.preferredSite)
-        } catch {
-            self.isPerformingAction = false
-            self.lastErrorMessage = error.localizedDescription
+        Task {
+            defer { self.isPerformingAction = false }
+            do {
+                try await self.cli.login(site: self.preferredSite)
+                await self.refresh(force: true)
+                self.lastActionMessage = "Jira login successful."
+            } catch {
+                self.lastErrorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -170,15 +172,17 @@ final class JiraBarModel: ObservableObject {
     func switchAccount() {
         guard !self.isPerformingAction else { return }
         self.isPerformingAction = true
-        self.lastActionMessage = "Switching Jira account…"
+        self.lastActionMessage = "Complete account switching in your browser."
         self.lastErrorMessage = nil
-        do {
-            try self.cli.login(site: self.preferredSite)
-            self.lastActionMessage = "Complete account switching in your browser."
-            self.startAuthPolling(successMessage: "Jira account updated.", preferredSite: self.preferredSite)
-        } catch {
-            self.isPerformingAction = false
-            self.lastErrorMessage = error.localizedDescription
+        Task {
+            defer { self.isPerformingAction = false }
+            do {
+                try await self.cli.login(site: self.preferredSite)
+                await self.refresh(force: true)
+                self.lastActionMessage = "Jira account updated."
+            } catch {
+                self.lastErrorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -198,22 +202,22 @@ final class JiraBarModel: ObservableObject {
 
     func moveForward(_ ticket: JiraTicket) async {
         await self.runAction(progress: "Moving \(ticket.key) forward…") {
-            try await self.cli.moveForward(ticket: ticket)
+            try await self.cli.moveForward(ticket: ticket, statuses: self.snapshot.projectStatuses)
             return "Moved \(ticket.key) to the next workflow state."
         }
     }
 
     func moveBackward(_ ticket: JiraTicket) async {
         await self.runAction(progress: "Moving \(ticket.key) backward…") {
-            try await self.cli.moveBackward(ticket: ticket)
+            try await self.cli.moveBackward(ticket: ticket, statuses: self.snapshot.projectStatuses)
             return "Moved \(ticket.key) to the previous workflow state."
         }
     }
 
-    func move(_ ticket: JiraTicket, to status: JiraWorkflowStatus) async {
-        await self.runAction(progress: "Moving \(ticket.key) to \(status.label)…") {
-            try await self.cli.move(ticketKey: ticket.key, to: status)
-            return "Moved \(ticket.key) to \(status.label)."
+    func move(_ ticket: JiraTicket, to statusName: String) async {
+        await self.runAction(progress: "Moving \(ticket.key) to \(statusName)…") {
+            try await self.cli.move(ticketKey: ticket.key, to: statusName)
+            return "Moved \(ticket.key) to \(statusName)."
         }
     }
 
@@ -254,31 +258,6 @@ final class JiraBarModel: ObservableObject {
                 await self.refresh(force: true)
             }
         }
-    }
-
-    private func startAuthPolling(successMessage: String, preferredSite: String) {
-        Task { [weak self] in
-            guard let self else { return }
-            defer { self.isPerformingAction = false }
-
-            for _ in 0..<45 {
-                try? await Task.sleep(for: .seconds(2))
-                await self.refresh(force: true)
-
-                if self.snapshot.auth.authorized {
-                    self.lastActionMessage = successMessage
-                    self.closeTerminal()
-                    return
-                }
-            }
-        }
-    }
-
-    private func closeTerminal() {
-        let script = "osascript -e 'tell application \"Terminal\" to close (every window whose name contains \"acli\")' -e 'if (count of windows of application \"Terminal\") is 0 then tell application \"Terminal\" to quit'"
-        try? ShellCommandRunner.launch(
-            executableURL: URL(fileURLWithPath: "/bin/zsh"),
-            arguments: ["-lc", script])
     }
 
     private static let relativeFormatter: RelativeDateTimeFormatter = {
