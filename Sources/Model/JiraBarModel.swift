@@ -1,6 +1,7 @@
 import AppKit
 import Combine
 import Foundation
+import ServiceManagement
 
 @MainActor
 final class JiraBarModel: ObservableObject {
@@ -29,6 +30,24 @@ final class JiraBarModel: ObservableObject {
             UserDefaults.standard.set(
                 self.preferredSite.trimmingCharacters(in: .whitespacesAndNewlines),
                 forKey: DefaultsKey.preferredSite)
+        }
+    }
+    @Published var launchAtLogin: Bool = {
+        if SMAppService.mainApp.status == .notRegistered {
+            try? SMAppService.mainApp.register()
+        }
+        return SMAppService.mainApp.status == .enabled
+    }() {
+        didSet {
+            do {
+                if launchAtLogin {
+                    try SMAppService.mainApp.register()
+                } else {
+                    try SMAppService.mainApp.unregister()
+                }
+            } catch {
+                self.launchAtLogin = SMAppService.mainApp.status == .enabled
+            }
         }
     }
     @Published var isRefreshing = false
