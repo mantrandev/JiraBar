@@ -72,33 +72,10 @@ struct SettingsView: View {
                 Stepper(value: self.$model.maxItemsPerSection, in: 3...20) {
                     Text("Items per section: \(self.model.maxItemsPerSection)")
                 }
+
+                Toggle("Launch at Login", isOn: self.$model.launchAtLogin)
             }
 
-            Section("Commands") {
-                Button("Refresh Now") {
-                    Task { await self.model.refresh(force: true) }
-                }
-
-                Button("Refresh Statuses") {
-                    self.model.refreshStatuses()
-                }
-                .disabled(!self.model.snapshot.auth.authorized)
-
-                Button("Login") {
-                    Task { self.model.login() }
-                }
-                .disabled(self.model.isPerformingAction)
-
-                Button("Switch Account") {
-                    Task { self.model.switchAccount() }
-                }
-                .disabled(self.model.preferredSite.isEmpty)
-
-                Button("Logout") {
-                    self.model.logout()
-                }
-                .disabled(!self.model.snapshot.auth.authorized)
-            }
 
             if let message = self.model.lastActionMessage, !message.isEmpty {
                 Section("Status") {
