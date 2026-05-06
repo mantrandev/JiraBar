@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AC2D9B122F91402A004592D7 /* jira_snapshot.zsh in Resources */ = {isa = PBXBuildFile; fileRef = AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */; };
 		AC2D9B132F91402A004592D7 /* menubar_icon.svg in Resources */ = {isa = PBXBuildFile; fileRef = AC2D9B022F91402A004592D7 /* menubar_icon.svg */; };
+		AC2D9B202F91402A004592D7 /* jira.zsh in Resources */ = {isa = PBXBuildFile; fileRef = AC2D9B1F2F914031004592D7 /* jira.zsh */; };
 		AC2D9B142F91402A004592D7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0B2F91402A004592D7 /* SettingsView.swift */; };
 		AC2D9B152F91402A004592D7 /* JiraSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B0E2F91402A004592D7 /* JiraSnapshotTests.swift */; };
 		AC2D9B162F91402A004592D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2D9B042F91402A004592D7 /* AppDelegate.swift */; };
@@ -29,6 +30,7 @@
 		AA0000000000000000000214 /* JiraBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JiraBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = jira_snapshot.zsh; sourceTree = "<group>"; };
 		AC2D9B022F91402A004592D7 /* menubar_icon.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = menubar_icon.svg; sourceTree = "<group>"; };
+		AC2D9B1F2F914031004592D7 /* jira.zsh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = jira.zsh; sourceTree = "<group>"; };
 		AC2D9B042F91402A004592D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC2D9B052F91402A004592D7 /* AppResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppResources.swift; sourceTree = "<group>"; };
 		AC2D9B062F91402A004592D7 /* JiraBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JiraBarApp.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			children = (
 				AC2D9B012F91402A004592D7 /* jira_snapshot.zsh */,
 				AC2D9B022F91402A004592D7 /* menubar_icon.svg */,
+				AC2D9B1F2F914031004592D7 /* jira.zsh */,
 				AC2D9B1F2F91402A004592D7 /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -191,6 +194,7 @@
 			files = (
 				AC2D9B122F91402A004592D7 /* jira_snapshot.zsh in Resources */,
 				AC2D9B132F91402A004592D7 /* menubar_icon.svg in Resources */,
+				AC2D9B202F91402A004592D7 /* jira.zsh in Resources */,
 				AC2D9B1E2F91402A004592D7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

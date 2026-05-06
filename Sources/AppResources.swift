@@ -17,4 +17,12 @@ enum AppResources {
         return Bundle.main.url(forResource: "menubar_icon", withExtension: "svg")
         #endif
     }
+
+    static func jiraHelperScriptURL() -> URL? {
+        #if SWIFT_PACKAGE
+        return Bundle.module.url(forResource: "jira", withExtension: "zsh")
+        #else
+        return Bundle.main.url(forResource: "jira", withExtension: "zsh")
+        #endif
+    }
 }
