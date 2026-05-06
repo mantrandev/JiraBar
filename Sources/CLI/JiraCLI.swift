@@ -79,15 +79,41 @@ struct JiraCLI {
     }
 
     func fetchStatuses(projectKey: String) async throws -> [String] {
-        let jql = "project = \(projectKey) ORDER BY updated DESC"
+        let script = """
+        source ~/.zshrc 2>/dev/null
+        SITE=$(grep 'site:' ~/.config/acli/jira_config.yaml 2>/dev/null | head -1 | awk '{print $2}')
+        EMAIL=$(grep 'email:' ~/.config/acli/jira_config.yaml 2>/dev/null | head -1 | awk '{print $2}')
+        TOKEN=$(security find-generic-password -s "acli" -w 2>/dev/null | sed 's/go-keyring-base64://' | base64 -d 2>/dev/null)
+        [ -z "$SITE" ] || [ -z "$EMAIL" ] || [ -z "$TOKEN" ] && exit 1
+        BOARD_ID=$(curl -sf -u "$EMAIL:$TOKEN" \
+            "https://$SITE/rest/agile/1.0/board?projectKeyOrId=\(projectKey)&maxResults=1" | \
+            python3 -c "import json,sys; d=json.load(sys.stdin); vs=d.get('values',[]); print(vs[0]['id'] if vs else '')" 2>/dev/null)
+        [ -z "$BOARD_ID" ] && exit 1
+        curl -sf -u "$EMAIL:$TOKEN" \
+            "https://$SITE/rest/agile/1.0/board/$BOARD_ID/configuration" | \
+            python3 -c "
+        import json, sys
+        d = json.load(sys.stdin)
+        cols = d.get('columnConfig', {}).get('columns', [])
+        print('\\n'.join(c['name'].strip() for c in cols if c.get('name','').strip()))
+        " 2>/dev/null
+        """
         let output = try await ShellCommandRunner.run(
+            executableURL: self.zshURL,
+            arguments: ["-c", script])
+        let statuses = output.standardOutput
+            .components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        if !statuses.isEmpty { return statuses }
+
+        // Fallback: derive from ticket search
+        let jql = "project = \(projectKey) ORDER BY updated DESC"
+        let fallback = try await ShellCommandRunner.run(
             executableURL: self.zshURL,
             arguments: ["-lc", self.shellPreamble +
                 "acli jira workitem search --jql \(Self.escape(jql)) --fields 'status' --json"])
-        guard output.exitCode == 0 else {
-            throw ShellCommandError.failedCommand(output.combinedOutput)
-        }
-        let result = Self.parseStatusesFromIssues(from: Data(output.standardOutput.utf8))
+        let result = Self.parseStatusesFromIssues(from: Data(fallback.standardOutput.utf8))
         if result.isEmpty {
             throw ShellCommandError.failedCommand("No statuses found for project \(projectKey).")
         }
