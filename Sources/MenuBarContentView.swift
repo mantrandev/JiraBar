@@ -31,7 +31,7 @@ struct MenuBarContentView: View {
             Section("Stories") {
                 if self.model.snapshot.auth.authorized {
                     if self.model.visibleStories.isEmpty {
-                        Text("No parent stories in the current sprint.")
+                        Text("No stories assigned to you in the current sprint.")
                     } else {
                         ForEach(self.model.visibleStories) { ticket in
                             TicketRowMenu(ticket: ticket, model: self.model)
@@ -45,20 +45,37 @@ struct MenuBarContentView: View {
                 }
             }
 
-            Section("My Not Done") {
+            Section("Bugs") {
                 if self.model.snapshot.auth.authorized {
-                    if self.model.visibleTickets.isEmpty {
-                        Text("No not-done tickets assigned to you.")
+                    if self.model.visibleBugs.isEmpty {
+                        Text("No open bugs assigned to you.")
                     } else {
-                        ForEach(self.model.visibleTickets) { ticket in
+                        ForEach(self.model.visibleBugs) { ticket in
                             TicketRowMenu(ticket: ticket, model: self.model)
                         }
-                        if self.model.snapshot.tickets.count > self.model.visibleTickets.count {
-                            Text("+\(self.model.snapshot.tickets.count - self.model.visibleTickets.count) more tickets")
+                        if self.model.snapshot.bugs.count > self.model.visibleBugs.count {
+                            Text("+\(self.model.snapshot.bugs.count - self.model.visibleBugs.count) more bugs")
                         }
                     }
                 } else {
-                    Text("Login to load your current sprint work.")
+                    Text("Login to load your bugs.")
+                }
+            }
+
+            Section("Task + Subtask") {
+                if self.model.snapshot.auth.authorized {
+                    if self.model.visibleTasks.isEmpty {
+                        Text("No open tasks assigned to you.")
+                    } else {
+                        ForEach(self.model.visibleTasks) { ticket in
+                            TicketRowMenu(ticket: ticket, model: self.model)
+                        }
+                        if self.model.snapshot.tasks.count > self.model.visibleTasks.count {
+                            Text("+\(self.model.snapshot.tasks.count - self.model.visibleTasks.count) more tasks")
+                        }
+                    }
+                } else {
+                    Text("Login to load your tasks.")
                 }
             }
 
