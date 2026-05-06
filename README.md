@@ -14,7 +14,7 @@
 
 Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows your stories, bugs, and tasks in separate sections, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
-<img width="749" height="562" alt="demo" src="https://github.com/user-attachments/assets/312770c9-b110-467a-9d5a-cba86ee0ba2e" />
+<img width="608" height="592" alt="jirabar_v1 1 0" src="https://github.com/user-attachments/assets/7eac515c-e42d-4ff1-ae1d-e17c682650fc" />
 <img width="664" height="679" alt="Screenshot 2026-04-17 at 12 11 07 AM" src="https://github.com/user-attachments/assets/b9522d06-d7a6-4db4-a4d8-c8e0d653f592" />
 
 ## Requirements
