@@ -272,16 +272,17 @@ final class JiraBarModel: ObservableObject {
         self.actingOnTicketKey = ticketKey
         self.lastActionMessage = progress
         self.lastErrorMessage = nil
-        defer { self.actingOnTicketKey = nil }
 
         do {
             let message = try await operation()
             self.lastActionMessage = message
+            self.actingOnTicketKey = nil
             if refreshAfter {
-                await self.refresh(force: true)
+                Task { await self.refresh(force: true) }
             }
         } catch {
             self.lastErrorMessage = error.localizedDescription
+            self.actingOnTicketKey = nil
         }
     }
 
