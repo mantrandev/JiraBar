@@ -10,6 +10,7 @@ final class JiraBarModel: ObservableObject {
         static let maxItemsPerSection = "jirabar.maxItemsPerSection"
         static let preferredSite = "jirabar.preferredSite"
         static let projectStatuses = "jirabar.projectStatuses"
+        static let launchAtLogin = "jirabar.launchAtLogin"
     }
 
     @Published var snapshot: JiraSnapshot = .empty
@@ -32,23 +33,13 @@ final class JiraBarModel: ObservableObject {
                 forKey: DefaultsKey.preferredSite)
         }
     }
-    @Published var launchAtLogin: Bool = {
-        if SMAppService.mainApp.status == .notRegistered {
-            try? SMAppService.mainApp.register()
-        }
-        let status = SMAppService.mainApp.status
-        return status == .enabled || status == .requiresApproval
-    }() {
+    @Published var launchAtLogin: Bool {
         didSet {
-            do {
-                if launchAtLogin {
-                    try SMAppService.mainApp.register()
-                } else {
-                    try SMAppService.mainApp.unregister()
-                }
-            } catch {
-                let status = SMAppService.mainApp.status
-                self.launchAtLogin = status == .enabled || status == .requiresApproval
+            UserDefaults.standard.set(self.launchAtLogin, forKey: DefaultsKey.launchAtLogin)
+            if self.launchAtLogin {
+                try? SMAppService.mainApp.register()
+            } else {
+                try? SMAppService.mainApp.unregister()
             }
         }
     }
@@ -72,6 +63,15 @@ final class JiraBarModel: ObservableObject {
         self.maxItemsPerSection = storedMaxItems == 0 ? 8 : min(max(storedMaxItems, 3), 20)
         self.preferredSite = UserDefaults.standard.string(forKey: DefaultsKey.preferredSite) ?? ""
         self.projectStatuses = UserDefaults.standard.stringArray(forKey: DefaultsKey.projectStatuses) ?? []
+
+        let hasStoredLaunchPref = UserDefaults.standard.object(forKey: DefaultsKey.launchAtLogin) != nil
+        if hasStoredLaunchPref {
+            self.launchAtLogin = UserDefaults.standard.bool(forKey: DefaultsKey.launchAtLogin)
+        } else {
+            self.launchAtLogin = true
+            UserDefaults.standard.set(true, forKey: DefaultsKey.launchAtLogin)
+            try? SMAppService.mainApp.register()
+        }
 
         self.restartRefreshLoop()
         Task {
