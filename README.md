@@ -12,7 +12,7 @@
 
 # JiraBar 🎟️ — Zero context switch. Full Jira control in menu bar and CLI.
 
-Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows parent stories and your not-done tickets, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
+Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows your stories, bugs, and tasks in separate sections, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
 <img width="749" height="562" alt="demo" src="https://github.com/user-attachments/assets/312770c9-b110-467a-9d5a-cba86ee0ba2e" />
 <img width="664" height="679" alt="Screenshot 2026-04-17 at 12 11 07 AM" src="https://github.com/user-attachments/assets/b9522d06-d7a6-4db4-a4d8-c8e0d653f592" />
@@ -55,26 +55,18 @@ open JiraBar.xcodeproj   # run the JiraBar scheme
 
 ## Features
 
-- **Stories** section — parent stories for your active sprint.
-- **My Not Done** section — all sprint tickets assigned to you that are not Done.
+- **Stories** section — your assigned stories in the active sprint.
+- **Bugs** section — open bugs assigned to you (not Done).
+- **Task + Subtask** section — open tasks and subtasks assigned to you (not Done).
 - Per-ticket submenu:
   - Open in Jira (browser)
   - Assign to Me
   - Next Status / Previous Status (workflow order)
-  - Move to → explicit status picker
+  - Move → full status list for your project, current status marked ✓
+- Workflow statuses fetched once at login from your project, cached locally — no hardcoding.
 - Settings window: preferred site, refresh interval (Manual / 30s / 1m / 2m / 5m), max items per section (3–20).
 - Switch Account and Logout from the menu or Settings.
-- Menu bar title shows live ticket count (`Jira 5`) or `Jira …` while loading.
-
----
-
-## Workflow statuses
-
-JiraBar steps through statuses in this order:
-
-`TO DO` → `In Progress` → `Testing` → `Block` → `Review` → `Wait to build PROD` → `DONE`
-
-Next Status / Previous Status move one step along that chain. Move to lets you jump anywhere.
+- Menu bar title shows live bug+task count (`Jira 5`) or `Jira …` while loading.
 
 ---
 
