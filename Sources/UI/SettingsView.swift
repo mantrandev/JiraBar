@@ -79,6 +79,11 @@ struct SettingsView: View {
                     Task { await self.model.refresh(force: true) }
                 }
 
+                Button("Refresh Statuses") {
+                    self.model.refreshStatuses()
+                }
+                .disabled(!self.model.snapshot.auth.authorized)
+
                 Button("Login") {
                     Task { self.model.login() }
                 }
