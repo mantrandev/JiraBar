@@ -71,10 +71,11 @@ final class JiraBarModel: ObservableObject {
         if !self.snapshot.auth.authorized {
             return "Jira Login"
         }
-        if self.isRefreshing && self.snapshot.tickets.isEmpty {
+        let total = self.snapshot.bugs.count + self.snapshot.tasks.count
+        if self.isRefreshing && total == 0 {
             return "Jira …"
         }
-        return "Jira \(self.snapshot.tickets.count)"
+        return "Jira \(total)"
     }
 
     var menuBarSymbolName: String {
@@ -84,7 +85,7 @@ final class JiraBarModel: ObservableObject {
         if self.isPerformingAction {
             return "arrow.triangle.2.circlepath"
         }
-        if self.snapshot.tickets.isEmpty {
+        if self.snapshot.bugs.isEmpty && self.snapshot.tasks.isEmpty {
             return "checkmark.circle"
         }
         return "ticket"
@@ -107,8 +108,12 @@ final class JiraBarModel: ObservableObject {
         Array(self.snapshot.stories.prefix(self.maxItemsPerSection))
     }
 
-    var visibleTickets: [JiraTicket] {
-        Array(self.snapshot.tickets.prefix(self.maxItemsPerSection))
+    var visibleBugs: [JiraTicket] {
+        Array(self.snapshot.bugs.prefix(self.maxItemsPerSection))
+    }
+
+    var visibleTasks: [JiraTicket] {
+        Array(self.snapshot.tasks.prefix(self.maxItemsPerSection))
     }
 
     var lastRefreshDescription: String {
@@ -240,7 +245,7 @@ final class JiraBarModel: ObservableObject {
     }
 
     private func fetchAndCacheStatuses() async {
-        let firstKey = self.snapshot.tickets.first?.key ?? self.snapshot.stories.first?.key ?? ""
+        let firstKey = self.snapshot.stories.first?.key ?? self.snapshot.bugs.first?.key ?? self.snapshot.tasks.first?.key ?? ""
         let projectKey = String(firstKey.split(separator: "-").first ?? "")
         guard !projectKey.isEmpty else {
             self.lastErrorMessage = "No project key — make sure tickets are loaded first."

@@ -6,7 +6,8 @@ struct JiraSnapshot: Equatable, Sendable {
     var site: String
     var auth: JiraAuthState
     var stories: [JiraTicket]
-    var tickets: [JiraTicket]
+    var bugs: [JiraTicket]
+    var tasks: [JiraTicket]
     var errorMessage: String?
     var fetchedAt: Date
 
@@ -16,14 +17,15 @@ struct JiraSnapshot: Equatable, Sendable {
         site: "",
         auth: .loggedOut,
         stories: [],
-        tickets: [],
+        bugs: [],
+        tasks: [],
         errorMessage: nil,
         fetchedAt: .distantPast)
 }
 
 extension JiraSnapshot: Codable {
     private enum CodingKeys: String, CodingKey {
-        case boardName, accountEmail, site, auth, stories, tickets, errorMessage, fetchedAt
+        case boardName, accountEmail, site, auth, stories, bugs, tasks, errorMessage, fetchedAt
     }
 
     init(from decoder: Decoder) throws {
@@ -33,7 +35,8 @@ extension JiraSnapshot: Codable {
         self.site = try c.decode(String.self, forKey: .site)
         self.auth = try c.decode(JiraAuthState.self, forKey: .auth)
         self.stories = try c.decode([JiraTicket].self, forKey: .stories)
-        self.tickets = try c.decode([JiraTicket].self, forKey: .tickets)
+        self.bugs = try c.decode([JiraTicket].self, forKey: .bugs)
+        self.tasks = try c.decode([JiraTicket].self, forKey: .tasks)
         self.errorMessage = try c.decodeIfPresent(String.self, forKey: .errorMessage)
         self.fetchedAt = try c.decode(Date.self, forKey: .fetchedAt)
     }
@@ -45,7 +48,8 @@ extension JiraSnapshot: Codable {
         try c.encode(self.site, forKey: .site)
         try c.encode(self.auth, forKey: .auth)
         try c.encode(self.stories, forKey: .stories)
-        try c.encode(self.tickets, forKey: .tickets)
+        try c.encode(self.bugs, forKey: .bugs)
+        try c.encode(self.tasks, forKey: .tasks)
         try c.encodeIfPresent(self.errorMessage, forKey: .errorMessage)
         try c.encode(self.fetchedAt, forKey: .fetchedAt)
     }
