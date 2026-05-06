@@ -133,6 +133,7 @@ struct MenuBarContentView: View {
         window.title = "JiraBar Settings"
         window.styleMask = [.titled, .closable]
         window.collectionBehavior = [.moveToActiveSpace]
+        window.level = .floating
         window.center()
         settingsWindow = window
 
