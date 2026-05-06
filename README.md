@@ -173,6 +173,29 @@ The file is already at `.claude/skills/jira-acli.md` and will be picked up autom
 
 ---
 
+## Changelog
+
+### v1.1.2
+- Fix status parsing: use `jq` instead of `python3`, fix `awk` field index for site parsing
+- Fix logout: clear all UserDefaults on logout; only clear `projectStatuses` on account switch
+- Add **Refresh Statuses** button in Settings
+- Fix status ordering: fetch ordered board columns via Jira REST API, fallback to search results
+
+### v1.1.1
+- Settings window: CLI Tools status and Shell Helpers install section
+- Settings window positioning (top-right, floating level, off-screen pre-layout fix)
+
+### v1.1.0
+- Per-ticket Move submenu with full project status list
+- Next Status / Previous Status actions (workflow order)
+- Project statuses fetched once at login, cached in UserDefaults
+- Per-ticket action lock (only disables the acting ticket, not the whole menu)
+
+### v1.0.0
+- Initial release
+
+---
+
 ## License
 
 MIT
