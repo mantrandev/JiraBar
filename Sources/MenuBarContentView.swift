@@ -135,6 +135,13 @@ struct MenuBarContentView: View {
         window.collectionBehavior = [.moveToActiveSpace]
         window.level = .floating
         window.center()
+        if let screen = NSScreen.main {
+            let visible = screen.visibleFrame
+            let size = window.frame.size
+            let x = visible.midX - size.width / 2
+            let y = visible.midY - size.height / 2 + visible.height * 0.1
+            window.setFrameOrigin(NSPoint(x: x, y: max(y, visible.minY + 8)))
+        }
         settingsWindow = window
 
         NotificationCenter.default.addObserver(
