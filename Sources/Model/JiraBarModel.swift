@@ -172,13 +172,7 @@ final class JiraBarModel: ObservableObject {
 
     func logout() {
         self.projectStatuses = []
-        self.preferredSite = ""
-        self.refreshInterval = .twoMinutes
-        self.maxItemsPerSection = 8
         UserDefaults.standard.removeObject(forKey: DefaultsKey.projectStatuses)
-        UserDefaults.standard.removeObject(forKey: DefaultsKey.preferredSite)
-        UserDefaults.standard.removeObject(forKey: DefaultsKey.refreshInterval)
-        UserDefaults.standard.removeObject(forKey: DefaultsKey.maxItemsPerSection)
         self.snapshot = .empty
         self.lastActionMessage = nil
         self.lastErrorMessage = nil
