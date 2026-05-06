@@ -165,7 +165,7 @@ private struct TicketRowMenu: View {
             }
             .disabled(self.model.isPerformingAction)
 
-            let statuses = self.model.statuses(for: self.ticket)
+            let statuses = self.model.projectStatuses
             if !statuses.isEmpty {
                 Menu("Move") {
                     ForEach(statuses, id: \.self) { statusName in

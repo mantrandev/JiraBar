@@ -8,11 +8,11 @@ final class JiraBarModel: ObservableObject {
         static let refreshInterval = "jirabar.refreshInterval"
         static let maxItemsPerSection = "jirabar.maxItemsPerSection"
         static let preferredSite = "jirabar.preferredSite"
-        static let statusesByType = "jirabar.statusesByType"
+        static let projectStatuses = "jirabar.projectStatuses"
     }
 
     @Published var snapshot: JiraSnapshot = .empty
-    @Published var statusesByType: [String: [String]] = [:]
+    @Published var projectStatuses: [String] = []
     @Published var refreshInterval: RefreshInterval {
         didSet {
             UserDefaults.standard.set(self.refreshInterval.rawValue, forKey: DefaultsKey.refreshInterval)
@@ -49,12 +49,12 @@ final class JiraBarModel: ObservableObject {
         let storedMaxItems = UserDefaults.standard.integer(forKey: DefaultsKey.maxItemsPerSection)
         self.maxItemsPerSection = storedMaxItems == 0 ? 8 : min(max(storedMaxItems, 3), 20)
         self.preferredSite = UserDefaults.standard.string(forKey: DefaultsKey.preferredSite) ?? ""
-        self.statusesByType = (UserDefaults.standard.object(forKey: DefaultsKey.statusesByType) as? [String: [String]]) ?? [:]
+        self.projectStatuses = UserDefaults.standard.stringArray(forKey: DefaultsKey.projectStatuses) ?? []
 
         self.restartRefreshLoop()
         Task {
             await self.refresh(force: true)
-            if self.statusesByType.isEmpty && self.snapshot.auth.authorized {
+            if self.projectStatuses.isEmpty && self.snapshot.auth.authorized {
                 await self.fetchAndCacheStatuses()
             }
         }
@@ -62,13 +62,6 @@ final class JiraBarModel: ObservableObject {
 
     deinit {
         self.refreshTask?.cancel()
-    }
-
-    func statuses(for ticket: JiraTicket) -> [String] {
-        if let s = statusesByType[ticket.issueType], !s.isEmpty { return s }
-        let key = statusesByType.keys.first { $0.caseInsensitiveCompare(ticket.issueType) == .orderedSame }
-        if let k = key, let s = statusesByType[k], !s.isEmpty { return s }
-        return statusesByType["*"] ?? []
     }
 
     var menuBarTitle: String {
@@ -172,8 +165,8 @@ final class JiraBarModel: ObservableObject {
     }
 
     func logout() {
-        self.statusesByType = [:]
-        UserDefaults.standard.removeObject(forKey: DefaultsKey.statusesByType)
+        self.projectStatuses = []
+        UserDefaults.standard.removeObject(forKey: DefaultsKey.projectStatuses)
         self.snapshot = .empty
         self.lastActionMessage = nil
         self.lastErrorMessage = nil
@@ -220,7 +213,7 @@ final class JiraBarModel: ObservableObject {
     }
 
     func moveForward(_ ticket: JiraTicket) async {
-        let statuses = self.statuses(for: ticket)
+        let statuses = self.projectStatuses
         await self.runAction(progress: "Moving \(ticket.key) forward…") {
             try await self.cli.moveForward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the next workflow state."
@@ -228,7 +221,7 @@ final class JiraBarModel: ObservableObject {
     }
 
     func moveBackward(_ ticket: JiraTicket) async {
-        let statuses = self.statuses(for: ticket)
+        let statuses = self.projectStatuses
         await self.runAction(progress: "Moving \(ticket.key) backward…") {
             try await self.cli.moveBackward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the previous workflow state."
@@ -255,8 +248,8 @@ final class JiraBarModel: ObservableObject {
         }
         do {
             let fetched = try await self.cli.fetchStatuses(projectKey: projectKey)
-            self.statusesByType = fetched
-            UserDefaults.standard.set(fetched, forKey: DefaultsKey.statusesByType)
+            self.projectStatuses = fetched
+            UserDefaults.standard.set(fetched, forKey: DefaultsKey.projectStatuses)
         } catch {
             self.lastErrorMessage = "Statuses: \(error.localizedDescription)"
         }

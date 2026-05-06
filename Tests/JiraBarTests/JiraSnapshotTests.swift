@@ -51,8 +51,6 @@ final class JiraSnapshotTests: XCTestCase {
           "site": "example.atlassian.net",
           "auth": { "authorized": true, "description": "Authenticated" },
           "stories": [], "tickets": [],
-          "statusesByType": {"Bug": ["To Do", "Done"]},
-          "projectStatuses": ["To Do", "Done"],
           "errorMessage": null,
           "fetchedAt": "2026-04-16T13:00:00Z"
         }
@@ -64,40 +62,48 @@ final class JiraSnapshotTests: XCTestCase {
         XCTAssertTrue(snapshot.tickets.isEmpty)
     }
 
-    func testParseStatusesPerTypeFormat() {
+    func testParseStatusesFromIssuesFieldsWrapped() {
         let json = """
         [
-          {"name": "Story", "statuses": [{"name": "To Do"}, {"name": "In Progress"}, {"name": "Done"}]},
-          {"name": "Bug", "statuses": [{"name": "To Do"}, {"name": "Testing"}, {"name": "Done"}]}
+          {"key": "T-1", "fields": {"status": {"name": "To Do"}}},
+          {"key": "T-2", "fields": {"status": {"name": "In Progress"}}},
+          {"key": "T-3", "fields": {"status": {"name": "To Do"}}},
+          {"key": "T-4", "fields": {"status": {"name": "Done"}}}
         ]
         """.data(using: .utf8)!
-        let result = JiraCLI.parseStatuses(from: json)
-        XCTAssertEqual(result["Story"], ["To Do", "In Progress", "Done"])
-        XCTAssertEqual(result["Bug"], ["To Do", "Testing", "Done"])
+        let result = JiraCLI.parseStatusesFromIssues(from: json)
+        XCTAssertEqual(result, ["To Do", "In Progress", "Done"])
     }
 
-    func testParseStatusesFlatFormat() {
+    func testParseStatusesFromIssuesObjectWrapper() {
         let json = """
-        [{"name": "To Do"}, {"name": "In Progress"}, {"name": "Done"}]
+        {
+          "issues": [
+            {"key": "T-1", "fields": {"status": {"name": "TO DO"}}},
+            {"key": "T-2", "fields": {"status": {"name": "REVIEW"}}},
+            {"key": "T-3", "fields": {"status": {"name": "DONE"}}}
+          ]
+        }
         """.data(using: .utf8)!
-        let result = JiraCLI.parseStatuses(from: json)
-        XCTAssertEqual(result["*"], ["To Do", "In Progress", "Done"])
+        let result = JiraCLI.parseStatusesFromIssues(from: json)
+        XCTAssertEqual(result, ["TO DO", "REVIEW", "DONE"])
     }
 
     func testParseStatusesActualBoard() {
-        // Statuses from the real project board
+        // Statuses from the real project board via workitem search
         let json = """
         [
-          {"name": "TO DO"},
-          {"name": "IN PROGRESS"},
-          {"name": "TESTING"},
-          {"name": "BLOCK"},
-          {"name": "REVIEW"},
-          {"name": "WAIT TO BUILD PROD"},
-          {"name": "DONE"}
+          {"key": "T-1", "fields": {"status": {"name": "TO DO"}}},
+          {"key": "T-2", "fields": {"status": {"name": "IN PROGRESS"}}},
+          {"key": "T-3", "fields": {"status": {"name": "TESTING"}}},
+          {"key": "T-4", "fields": {"status": {"name": "BLOCK"}}},
+          {"key": "T-5", "fields": {"status": {"name": "REVIEW"}}},
+          {"key": "T-6", "fields": {"status": {"name": "WAIT TO BUILD PROD"}}},
+          {"key": "T-7", "fields": {"status": {"name": "DONE"}}},
+          {"key": "T-8", "fields": {"status": {"name": "IN PROGRESS"}}}
         ]
         """.data(using: .utf8)!
-        let result = JiraCLI.parseStatuses(from: json)
-        XCTAssertEqual(result["*"], ["TO DO", "IN PROGRESS", "TESTING", "BLOCK", "REVIEW", "WAIT TO BUILD PROD", "DONE"])
+        let result = JiraCLI.parseStatusesFromIssues(from: json)
+        XCTAssertEqual(result, ["TO DO", "IN PROGRESS", "TESTING", "BLOCK", "REVIEW", "WAIT TO BUILD PROD", "DONE"])
     }
 }
