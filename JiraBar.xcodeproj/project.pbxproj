@@ -98,17 +98,57 @@
 			isa = PBXGroup;
 			children = (
 				AC2D9B032F91402A004592D7 /* Resources */,
-				AC2D9B042F91402A004592D7 /* AppDelegate.swift */,
-				AC2D9B052F91402A004592D7 /* AppResources.swift */,
-				AC2D9B062F91402A004592D7 /* JiraBarApp.swift */,
-				AC2D9B072F91402A004592D7 /* JiraBarModel.swift */,
-				AC2D9B082F91402A004592D7 /* JiraCLI.swift */,
-				AC2D9B092F91402A004592D7 /* JiraModels.swift */,
-				AC2D9B0A2F91402A004592D7 /* MenuBarContentView.swift */,
-				AC2D9B0B2F91402A004592D7 /* SettingsView.swift */,
-				AC2D9B0C2F91402A004592D7 /* ShellCommandRunner.swift */,
+				AC2D9B302F91402A004592D7 /* App */,
+				AC2D9B312F91402A004592D7 /* Model */,
+				AC2D9B322F91402A004592D7 /* CLI */,
+				AC2D9B332F91402A004592D7 /* UI */,
+				AC2D9B342F91402A004592D7 /* Support */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		AC2D9B302F91402A004592D7 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B042F91402A004592D7 /* AppDelegate.swift */,
+				AC2D9B062F91402A004592D7 /* JiraBarApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AC2D9B312F91402A004592D7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B072F91402A004592D7 /* JiraBarModel.swift */,
+				AC2D9B092F91402A004592D7 /* JiraModels.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		AC2D9B322F91402A004592D7 /* CLI */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B082F91402A004592D7 /* JiraCLI.swift */,
+				AC2D9B0C2F91402A004592D7 /* ShellCommandRunner.swift */,
+			);
+			path = CLI;
+			sourceTree = "<group>";
+		};
+		AC2D9B332F91402A004592D7 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B0A2F91402A004592D7 /* MenuBarContentView.swift */,
+				AC2D9B0B2F91402A004592D7 /* SettingsView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		AC2D9B342F91402A004592D7 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				AC2D9B052F91402A004592D7 /* AppResources.swift */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 		AC2D9B0F2F91402A004592D7 /* JiraBarTests */ = {
