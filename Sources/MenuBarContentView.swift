@@ -165,22 +165,22 @@ private struct TicketRowMenu: View {
             Button("Open in Jira") {
                 Task { await self.model.openInBrowser(self.ticket) }
             }
-            .disabled(self.model.isPerformingAction)
+            .disabled(self.model.isPerformingAction || self.model.actingOnTicketKey == self.ticket.key)
 
             Button("Assign to Me") {
                 Task { await self.model.assignToMe(self.ticket) }
             }
-            .disabled(self.model.isPerformingAction)
+            .disabled(self.model.isPerformingAction || self.model.actingOnTicketKey == self.ticket.key)
 
             Divider()
             Button("Next Status") {
                 Task { await self.model.moveForward(self.ticket) }
             }
-            .disabled(self.model.isPerformingAction)
+            .disabled(self.model.isPerformingAction || self.model.actingOnTicketKey == self.ticket.key)
             Button("Previous Status") {
                 Task { await self.model.moveBackward(self.ticket) }
             }
-            .disabled(self.model.isPerformingAction)
+            .disabled(self.model.isPerformingAction || self.model.actingOnTicketKey == self.ticket.key)
 
             let statuses = self.model.projectStatuses
             if !statuses.isEmpty {

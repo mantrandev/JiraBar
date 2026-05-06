@@ -33,6 +33,7 @@ final class JiraBarModel: ObservableObject {
     }
     @Published var isRefreshing = false
     @Published var isPerformingAction = false
+    @Published var actingOnTicketKey: String?
     @Published var isLoadingInitialSnapshot = true
     @Published var lastActionMessage: String?
     @Published var lastErrorMessage: String?
@@ -204,14 +205,14 @@ final class JiraBarModel: ObservableObject {
     }
 
     func openInBrowser(_ ticket: JiraTicket) async {
-        await self.runAction(progress: "Opening \(ticket.key)…", refreshAfter: false) {
+        await self.runAction(ticketKey: ticket.key, progress: "Opening \(ticket.key)…", refreshAfter: false) {
             try await self.cli.openInBrowser(ticketKey: ticket.key)
             return "Opened \(ticket.key) in the browser."
         }
     }
 
     func assignToMe(_ ticket: JiraTicket) async {
-        await self.runAction(progress: "Assigning \(ticket.key)…") {
+        await self.runAction(ticketKey: ticket.key, progress: "Assigning \(ticket.key)…") {
             try await self.cli.assignToMe(ticketKey: ticket.key)
             return "Assigned \(ticket.key) to you."
         }
@@ -219,7 +220,7 @@ final class JiraBarModel: ObservableObject {
 
     func moveForward(_ ticket: JiraTicket) async {
         let statuses = self.projectStatuses
-        await self.runAction(progress: "Moving \(ticket.key) forward…") {
+        await self.runAction(ticketKey: ticket.key, progress: "Moving \(ticket.key) forward…") {
             try await self.cli.moveForward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the next workflow state."
         }
@@ -227,14 +228,14 @@ final class JiraBarModel: ObservableObject {
 
     func moveBackward(_ ticket: JiraTicket) async {
         let statuses = self.projectStatuses
-        await self.runAction(progress: "Moving \(ticket.key) backward…") {
+        await self.runAction(ticketKey: ticket.key, progress: "Moving \(ticket.key) backward…") {
             try await self.cli.moveBackward(ticket: ticket, statuses: statuses)
             return "Moved \(ticket.key) to the previous workflow state."
         }
     }
 
     func move(_ ticket: JiraTicket, to statusName: String) async {
-        await self.runAction(progress: "Moving \(ticket.key) to \(statusName)…") {
+        await self.runAction(ticketKey: ticket.key, progress: "Moving \(ticket.key) to \(statusName)…") {
             try await self.cli.move(ticketKey: ticket.key, to: statusName)
             return "Moved \(ticket.key) to \(statusName)."
         }
@@ -261,16 +262,17 @@ final class JiraBarModel: ObservableObject {
     }
 
     private func runAction(
+        ticketKey: String,
         progress: String,
         refreshAfter: Bool = true,
         operation: @escaping @Sendable () async throws -> String) async
     {
-        if self.isPerformingAction { return }
+        guard self.actingOnTicketKey == nil else { return }
 
-        self.isPerformingAction = true
+        self.actingOnTicketKey = ticketKey
         self.lastActionMessage = progress
         self.lastErrorMessage = nil
-        defer { self.isPerformingAction = false }
+        defer { self.actingOnTicketKey = nil }
 
         do {
             let message = try await operation()
