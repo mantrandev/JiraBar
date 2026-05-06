@@ -175,6 +175,11 @@ The file is already at `.claude/skills/jira-acli.md` and will be picked up autom
 
 ## Changelog
 
+### v1.1.3
+- Add **Launch at Login** toggle in Settings (enabled by default)
+- Fix launch at login: decouple toggle state from SMAppService status
+- Settings window: fixed height at half screen, scrollable content
+
 ### v1.1.2
 - Fix status parsing: use `jq` instead of `python3`, fix `awk` field index for site parsing
 - Fix logout: clear all UserDefaults on logout; only clear `projectStatuses` on account switch
