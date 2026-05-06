@@ -36,7 +36,8 @@ final class JiraBarModel: ObservableObject {
         if SMAppService.mainApp.status == .notRegistered {
             try? SMAppService.mainApp.register()
         }
-        return SMAppService.mainApp.status == .enabled
+        let status = SMAppService.mainApp.status
+        return status == .enabled || status == .requiresApproval
     }() {
         didSet {
             do {
@@ -46,7 +47,8 @@ final class JiraBarModel: ObservableObject {
                     try SMAppService.mainApp.unregister()
                 }
             } catch {
-                self.launchAtLogin = SMAppService.mainApp.status == .enabled
+                let status = SMAppService.mainApp.status
+                self.launchAtLogin = status == .enabled || status == .requiresApproval
             }
         }
     }
