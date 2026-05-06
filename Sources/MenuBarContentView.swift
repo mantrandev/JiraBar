@@ -147,19 +147,20 @@ struct MenuBarContentView: View {
             }
         }
 
-        hosting.view.layoutSubtreeIfNeeded()
+        window.setFrameOrigin(NSPoint(x: -10000, y: -10000))
 
-        if let screen = NSScreen.main {
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+
+        DispatchQueue.main.async {
+            guard let screen = NSScreen.main else { return }
             let visible = screen.visibleFrame
             let size = window.frame.size
             let x = visible.maxX - size.width - 16
             let y = visible.maxY - size.height - 16
             window.setFrameOrigin(NSPoint(x: x, y: y))
         }
-
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
-        window.makeKeyAndOrderFront(nil)
     }
 }
 
