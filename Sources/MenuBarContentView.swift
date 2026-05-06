@@ -134,15 +134,6 @@ struct MenuBarContentView: View {
         window.styleMask = [.titled, .closable]
         window.collectionBehavior = [.moveToActiveSpace]
         window.level = .floating
-        if let screen = NSScreen.main {
-            let visible = screen.visibleFrame
-            let size = window.frame.size
-            let x = visible.maxX - size.width - 16
-            let y = visible.maxY - size.height - 16
-            window.setFrameOrigin(NSPoint(x: x, y: y))
-        } else {
-            window.center()
-        }
         settingsWindow = window
 
         NotificationCenter.default.addObserver(
@@ -159,6 +150,15 @@ struct MenuBarContentView: View {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+
+        DispatchQueue.main.async {
+            guard let screen = NSScreen.main else { return }
+            let visible = screen.visibleFrame
+            let size = window.frame.size
+            let x = visible.maxX - size.width - 16
+            let y = visible.maxY - size.height - 16
+            window.setFrameOrigin(NSPoint(x: x, y: y))
+        }
     }
 }
 
