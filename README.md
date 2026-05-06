@@ -44,9 +44,11 @@ open JiraBar.xcodeproj   # run the JiraBar scheme
 ### First run
 1. Launch `JiraBar.app` — the menu bar icon appears immediately.
 2. Open **Settings** (menu bar → Settings…).
-3. Set your Jira site (`your-team.atlassian.net`) under **Workspace → Preferred Site**.
-4. Click **Save Site**, then click **Login**.
-5. Complete authentication in your browser; JiraBar polls until it detects success.
+3. Under **CLI Tools**, confirm `acli` and `jq` show as installed. If not, click **Install with Homebrew** for each.
+4. Set your Jira site (`your-team.atlassian.net`) under **Workspace → Preferred Site**.
+5. Click **Save Site**, then click **Login**.
+6. Complete authentication in your browser; JiraBar polls until it detects success.
+7. *(Optional)* Under **Shell Helpers**, click **Install** to add `jira.zsh` terminal commands to your shell.
 
 > **Gatekeeper note:** App is not code-signed. First launch: right-click → Open → Open.
 
@@ -63,7 +65,10 @@ open JiraBar.xcodeproj   # run the JiraBar scheme
   - Next Status / Previous Status (workflow order)
   - Move → full status list for your project, current status marked ✓
 - Workflow statuses fetched once at login from your project, cached locally — no hardcoding.
-- Settings window: preferred site, refresh interval (Manual / 30s / 1m / 2m / 5m), max items per section (3–20).
+- Settings window (opens top-right):
+  - Preferred site, refresh interval (Manual / 30s / 1m / 2m / 5m), max items per section (3–20).
+  - **CLI Tools** — shows `acli` and `jq` install status; Install with Homebrew button for each.
+  - **Shell Helpers** — one-click install of `jira.zsh` to `~/.jira.zsh` with auto `source` in `~/.zshrc`.
 - Switch Account and Logout from the menu or Settings.
 - Menu bar title shows live bug+task count (`Jira 5`) or `Jira …` while loading.
 
@@ -72,6 +77,10 @@ open JiraBar.xcodeproj   # run the JiraBar scheme
 ## Shell helpers (optional)
 
 `Scripts/jira.zsh` provides `jv`, `jm`, `jforward`, `jmine`, `jstories`, and ~40 other shorthand commands for managing Jira issues from the terminal.
+
+**Install from the app (recommended):** Open **Settings → Shell Helpers** and click **Install**. This copies the script to `~/.jira.zsh` and adds `source ~/.jira.zsh` to your `~/.zshrc` automatically.
+
+**Manual install:**
 
 ### 1. Copy the script
 
