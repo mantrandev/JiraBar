@@ -154,19 +154,6 @@ The file is already at `.claude/skills/jira-acli.md` and will be picked up autom
 
 ---
 
-## Architecture
-
-| File | Role |
-|---|---|
-| `JiraBarApp.swift` | `@main` entry, wires `JiraBarModel` into `MenuBarExtra` |
-| `AppDelegate.swift` | Forces accessory mode (no Dock icon) on launch |
-| `JiraBarModel.swift` | `@MainActor ObservableObject` — all state, refresh loop, UserDefaults |
-| `JiraCLI.swift` | Wraps `acli jira …` commands; all shell strings prefixed with `shellPreamble` |
-| `ShellCommandRunner.swift` | async/await `Process` wrappers: `run`, `runInteractive`, `launch` |
-| `JiraModels.swift` | Codable structs: `JiraSnapshot`, `JiraTicket`, `JiraAuthState` |
-| `Resources/jira_snapshot.zsh` | Bundled script; sources `~/.zshrc`, calls `acli`, emits JSON |
-| `AppResources.swift` | Bundle resource loader with Xcode/SPM fallback paths |
-
 ## Runtime requirements
 
 `acli` and `jq` must be reachable via the user's `~/.zshrc` PATH — the snapshot script sources it on every refresh.
