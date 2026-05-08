@@ -2,7 +2,6 @@ import Foundation
 
 struct JiraCLI {
     private let zshURL = URL(fileURLWithPath: "/bin/zsh")
-    private let shellPreamble = "source ~/.zshrc 2>/dev/null; "
 
     func fetchSnapshot() async throws -> JiraSnapshot {
         guard let scriptURL = AppResources.jiraSnapshotScriptURL() else {
@@ -26,7 +25,7 @@ struct JiraCLI {
     func login(site: String) async throws {
         _ = try await ShellCommandRunner.runWithPTY(
             executableURL: self.zshURL,
-            arguments: ["-lc", self.shellPreamble + "acli jira auth login --web"],
+            arguments: ["-lc", "acli jira auth login --web"],
             environment: ["TERM": "xterm-256color"],
             autoRespond: { output in
                 let plain = output.replacingOccurrences(
@@ -79,7 +78,7 @@ struct JiraCLI {
     }
 
     func fetchStatuses(projectKey: String) async throws -> [String] {
-        let script = self.shellPreamble + """
+        let script = """
         SITE=$(grep 'site:' ~/.config/acli/jira_config.yaml 2>/dev/null | head -1 | awk '{print $NF}')
         EMAIL=$(grep 'email:' ~/.config/acli/jira_config.yaml 2>/dev/null | head -1 | awk '{print $NF}')
         TOKEN=$(security find-generic-password -s "acli" -w 2>/dev/null | sed 's/go-keyring-base64://' | base64 -d 2>/dev/null)
@@ -149,7 +148,7 @@ struct JiraCLI {
     private func runShell(_ command: String) async throws {
         let output = try await ShellCommandRunner.run(
             executableURL: self.zshURL,
-            arguments: ["-lc", self.shellPreamble + command])
+            arguments: ["-lc", command])
 
         guard output.exitCode == 0 else {
             throw ShellCommandError.failedCommand(output.combinedOutput)
