@@ -1,16 +1,4 @@
-<img width="12" height="22" alt="menubar_icon" src="https://github.com/user-attachments/assets/f201c089-701b-481c-90e2-48ef0583586f" /><?xml version="1.0" encoding="UTF-8"?>
-<svg width="12" height="22" viewBox="5 10 44 92" xmlns="http://www.w3.org/2000/svg">
-  <path d="M 30 15 v 60 A 20 20 0 0 1 10 95" fill="none" stroke="black" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="30" cy="75" r="2.5" fill="black"/>
-  <circle cx="28.4" cy="82.6" r="2.5" fill="black"/>
-  <circle cx="24.2" cy="89.2" r="2.5" fill="black"/>
-  <circle cx="17.6" cy="93.4" r="2.5" fill="black"/>
-  <circle cx="10" cy="95" r="2.5" fill="black"/>
-  <circle cx="42" cy="95" r="4.5" fill="black"/>
-</svg>
-
-
-# JiraBar 🎟️ — Zero context switch. Full Jira control in menu bar and CLI.
+# JiraBar — Zero context switch. Full Jira control in menu bar and CLI.
 
 Tiny macOS 14+ menu bar app that keeps your current-sprint Jira work visible without leaving the menu bar. Shows your stories, bugs, and tasks in separate sections, with per-ticket menus for assign / workflow transitions / browser open. Login, logout, and switch account straight from the menu. No Dock icon, minimal UI, live ticket count in the menu bar.
 
